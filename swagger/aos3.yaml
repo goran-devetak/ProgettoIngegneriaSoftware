@@ -1,305 +1,193 @@
-openapi: 3.0.3
+openapi: 3.0.0
 info:
-  title: Comune Parking Management API
-  description: "API for managing municipal parking, including authentication, parking\
-    \ status updates, and reporting."
   version: 1.0.0
+  title: TestAPI
+  description: random API
+  # other metadata as termsOfService, contact, license and so on
+# her in the root are defined the servers 
 servers:
-- url: https://virtserver.swaggerhub.com/GORANDEVETAK/ProgAPI/1.0.0
-  description: SwaggerHub API Auto Mocking
-- url: https://api.parking-comune.it/v1
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/GORANDEVETAK/ProgAPI/1.0.0
+  - url: https://api.parking-comune.it/v1
+
+# DEFINIZIONE EDNPOINTS
 paths:
-  /users/login:
-    post:
-      summary: Log in, prova onesta di modifica api
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserLogin'
-        required: true
+  /parcheggi:
+    get: 
+      description: torna la lista dei parcheggi
+      parameters: 
+        - name: bodyLimit
+          in: query
+          description: il numero di parcheggio ritornati
+          schema:
+            type: integer
+            maximum: 10
+        - name: pageLimit
+          in: query
+          description: il numero di pagine da tornare
+          schema:
+            type: integer
+            maximum: 5  
       responses:
-        "200":
-          description: Successful login
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_200'
-        "401":
-          description: Invalid credentials
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /parking-lots:
-    get:
-      summary: Retrieve a list of parking lots
-      responses:
-        "200":
-          description: List of parking lots
+        200:
+          description: lista parcheggio tornata con successo
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ParkingLot'
+                  $ref: '#/components/schemas/parcheggio'
+                  
     post:
-      summary: Create a new parking lot
-      requestBody:
+      description: crea un nuovo parcheggio nel db
+      requestBody: 
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/parkinglots_body'
-        required: true
+              type: object
+              properties:
+                name: 
+                  type: string
+                indirizzo:
+                  $ref: '#/components/schemas/address'
+                num_posti:
+                  type: number
+                stato:
+                  type: string
+                  enum: [attivo, disattivo, segnalato]
       responses:
-        "201":
-          description: Parking lot created successfully
+        200:
+          description: nuovo parcheggio aggiunto con successo
+        
+  /parcheggi/{id}:
+    get:
+      description: torna info su specifico parcheggio
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: l'id del parcheggio
+          schema:
+            type: integer
+      responses:
+        200:
+          description: parcheggio tornato con successo
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ParkingLot'
-  /parking-lots/{id}/status:
+                $ref: '#/components/schemas/parcheggio'
+            
     patch:
-      summary: Update the status of a parking lot
-      parameters:
-      - name: id
-        in: path
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
+      description: cambia lo stato del parcheggio(attivo/disattivo/segnalato)
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          description: l'id del parcheggio
+          schema:
+            type: integer
       requestBody:
+        description: nuovo stato per aggiornare quello attuale
+        required: true
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/id_status_body'
-        required: true
+            schema: 
+              type: object
+              properties:
+                stato:
+                  type: string
+                  enum: [attivo, disattivo, segnalato]
+                  description: nuovo stato per il parcheggio
+              required:
+                - stato
       responses:
-        "200":
-          description: Parking lot status updated successfully
+        200:
+          description: stato del parcheggio aggiornato con successo
           content:
-            application/json:
+            applicaton/json:
               schema:
-                $ref: '#/components/schemas/ParkingLot'
-        "404":
-          description: Parking lot not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /reports:
-    get:
-      summary: Retrieve a list of reports
-      responses:
-        "200":
-          description: List of reports
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Report'
-    post:
-      summary: Create a new report
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/reports_body'
-        required: true
-      responses:
-        "201":
-          description: Report created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Report'
-  /statistics/parking-lots/{id}:
-    get:
-      summary: Get specific statistics for a parking lot
-      parameters:
-      - name: id
-        in: path
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
-      responses:
-        "200":
-          description: Statistics for the specific parking lot
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ParkingStatistics'
+                type: object
+                properties:
+                  id: 
+                    type: integer
+                  stato:
+                    type: string
+                    enum: [attivo, distattivo, segnalato]
+    
+
+# DEFINIZIONE RISORSE:
 components:
   schemas:
-    UserLogin:
-      required:
-      - email
-      - password
+    parcheggio:
       type: object
       properties:
-        email:
-          type: string
-        password:
-          type: string
-    Error:
-      type: object
-      properties:
-        code:
-          type: integer
-        message:
-          type: string
-    ParkingLot:
-      type: object
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        name:
+        nome:
           type: string
         address:
-          $ref: '#/components/schemas/ParkingLot_address'
-        status:
-          type: string
-          enum:
-          - "true"
-          - "false"
-          - pending
-        spotsNumber:
+          $ref: '#/components/schemas/address'
+        numPosti:
           type: number
-    Spot:
+        stato:
+          type: string
+          enum: [attivo, disattivo, segnalato]
+        listaPosti:
+          type: array
+          items:
+            $ref: '#/components/schemas/posto'
+        listaSegnalazioni:
+          type: array
+          items:
+            $ref: '#/components/schemas/segnalazione'
+            
+    posto:
       type: object
       properties:
-        id:
-          type: integer
-          readOnly: true
-        parking_lot_id:
-          type: integer
-        status:
+        stato:
           type: boolean
-        category:
+        categoria:
           type: string
-          enum:
-          - sharing
-          - privato
-          - libero
-      description: ciao mi chiamo Luis
-    Reservation:
+          enum: [libero, sharing, privato]
+        utilizzi:
+          type: object
+          properties:
+            idUtente:
+              type: number
+            timestamp:
+              type: number
+            servizio:
+              type: string
+        
+    segnalazione:
       type: object
       properties:
-        id:
-          type: integer
-          readOnly: true
-        user_id:
-          type: integer
-        spot_id:
-          type: integer
-        category:
+        stato:
+          type: boolean
+        descrizione:
           type: string
-          enum:
-          - sharing
-          - privato
-          - libero
-      description: Prenotazione posto da un utente
-    Report:
-      type: object
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        parking_lot_id:
-          type: integer
-        description:
+        foto:
           type: string
-        photo_url:
-          type: string
-          nullable: true
-    ParkingStatistics:
-      type: object
-      properties:
-        parking_lot_id:
-          type: integer
-        info_model:
-          type: string
-          description: info sul tipo di modello/eventuali extra
-        current_supplied:
-          type: number
-        total_spots:
-          type: integer
-        available_spots:
-          type: integer
-        avg_daily_usage:
-          type: number
-        usage_by_hour:
-          maxItems: 24
-          minItems: 24
-          type: array
-          description: Array representing hourly usage (12 values for 12 hour).
-          items:
-            maximum: 1000
-            minimum: 0
-            type: integer
-    GeneralStatistics:
-      type: object
-      properties:
-        current_supplied:
-          type: number
-        avg_daily_usage:
-          type: number
-        usage_by_hour:
-          maxItems: 24
-          minItems: 24
-          type: array
-          description: Array representing hourly usage (24 values for 24 hour).
-          items:
-            maximum: 1000
-            minimum: 0
-            type: integer
-    inline_response_200:
-      type: object
-      properties:
-        message:
-          type: string
-          example: Login successful
-    parkinglots_body:
-      allOf:
-      - $ref: '#/components/schemas/ParkingLot'
-      - required:
-        - address
-        - name
-        - status
-        type: object
-    id_status_body:
-      allOf:
-      - $ref: '#/components/schemas/ParkingLot'
-      - required:
-        - status
-        type: object
-        properties:
-          name:
-            readOnly: true
-          address:
-            readOnly: true
-    reports_body:
-      allOf:
-      - $ref: '#/components/schemas/Report'
-      - required:
-        - description
-        - parking_lot_id
-        type: object
-    ParkingLot_address:
+        contatti:
+          type: object
+          properties:
+            mail:
+              type: string
+            telefono:
+              type: number
+              
+    address:
       type: object
       properties:
         via:
           type: string
-        stAddress:
+        num:
           type: number
+        comune:
+          type: string
         cap:
           type: number
         long:
           type: number
-        lat:
-          type: number
+        lat: 
+           type: number
