@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   version: 1.0.0
   title: TestAPI
-  description: random API
+  description: random API, prova di modifica
   # other metadata as termsOfService, contact, license and so on
 # her in the root are defined the servers 
 servers:
