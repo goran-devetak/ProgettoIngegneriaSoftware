@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   version: 1.0.0
   title: TestAPI
-  description: random API, prova di modifica
+  description: random API
   # other metadata as termsOfService, contact, license and so on
 # her in the root are defined the servers 
 servers:
@@ -16,29 +16,17 @@ paths:
   /parcheggi:
     get: 
       description: torna la lista dei parcheggi
-      parameters: 
-        - name: bodyLimit
-          in: query
-          description: il numero di parcheggio ritornati
-          schema:
-            type: integer
-            maximum: 10
-        - name: pageLimit
-          in: query
-          description: il numero di pagine da tornare
-          schema:
-            type: integer
-            maximum: 5  
       responses:
         200:
           description: lista parcheggio tornata con successo
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/parcheggio'
-                  
+                $ref: '#/components/schemas/parcheggi'
+        404:
+          description: page not found
+          
+  /advanced:           
     post:
       description: crea un nuovo parcheggio nel db
       requestBody: 
@@ -129,6 +117,7 @@ components:
           $ref: '#/components/schemas/address'
         numPosti:
           type: number
+        # togli stato e cambialo con attivo e segnalato con boolean
         stato:
           type: string
           enum: [attivo, disattivo, segnalato]
@@ -140,6 +129,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/segnalazione'
+    
+    parcheggi:
+      type: array
+      items:
+        $ref: '#/components/schemas/parcheggio'
             
     posto:
       type: object
