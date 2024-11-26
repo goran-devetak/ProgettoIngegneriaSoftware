@@ -1,34 +1,33 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
   version: 1.0.0
-  title: TestAPI
-  description: random API
-  # other metadata as termsOfService, contact, license and so on
-# her in the root are defined the servers 
+  title: API per il Progetto di Ingegneria del Software
+  description: Api per gestire i parcheggi dei monopattini nel comune di Trento
 servers:
   # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/GORANDEVETAK/ProgAPI/1.0.0
   - url: https://api.parking-comune.it/v1
 
-# DEFINIZIONE EDNPOINTS
+# DEFINING ENDPOINTS
 paths:
-  /parcheggi:
+  # STATION
+  /stations:
     get: 
-      description: torna la lista dei parcheggi
+      description: Returns the list of stations
       responses:
         200:
-          description: lista parcheggio tornata con successo
+          description: Station list returned successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/parcheggi'
+                $ref: '#/components/schemas/stations'
         404:
-          description: page not found
+          description: Page not found
           
   /advanced:           
     post:
-      description: crea un nuovo parcheggio nel db
+      description: Creates a new station in the database
       requestBody: 
         required: true
         content:
@@ -38,162 +37,335 @@ paths:
               properties:
                 name: 
                   type: string
-                indirizzo:
+                address:
                   $ref: '#/components/schemas/address'
-                num_posti:
+                num_slots:
                   type: number
-                stato:
+                state:
                   type: string
-                  enum: [attivo, disattivo, segnalato]
+                  enum: [active, inactive, reported]
       responses:
         200:
-          description: nuovo parcheggio aggiunto con successo
+          description: New station added successfully
         
-  /parcheggi/{id}:
+  /stations/{id}:
     get:
-      description: torna info su specifico parcheggio
+      description: Returns information about a specific station
       parameters:
         - in: path
           name: id
           required: true
-          description: l'id del parcheggio
+          description: The ID of the station
           schema:
             type: integer
       responses:
         200:
-          description: parcheggio tornato con successo
+          description: Station returned successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/parcheggio'
+                $ref: '#/components/schemas/station'
             
     patch:
-      description: cambia lo stato del parcheggio(attivo/disattivo/segnalato)
+      description: Changes the state of the station (active/inactive/reported)
       parameters: 
         - in: path
           name: id
           required: true
-          description: l'id del parcheggio
+          description: The ID of the station
           schema:
             type: integer
       requestBody:
-        description: nuovo stato per aggiornare quello attuale
+        description: New state to update the current one
         required: true
         content:
           application/json:
             schema: 
               type: object
               properties:
-                stato:
+                state:
                   type: string
-                  enum: [attivo, disattivo, segnalato]
-                  description: nuovo stato per il parcheggio
+                  enum: [active, inactive, reported]
+                  description: New state for the station
               required:
-                - stato
+                - state
       responses:
         200:
-          description: stato del parcheggio aggiornato con successo
+          description: Station state updated successfully
           content:
-            applicaton/json:
+            application/json:
               schema:
                 type: object
                 properties:
                   id: 
                     type: integer
-                  stato:
+                  state:
                     type: string
-                    enum: [attivo, distattivo, segnalato]
+                    enum: [active, inactive, reported]
+                    
+    post:
+      description: Adds a slot to the current station
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          description: ID of the station
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category:
+                  type: string
+                  enum: [free, sharing, private]
+      responses:
+        200:
+          description: New slot added successfully
+  
+  /stations/{id}/{slotid}:
+    get:
+      description: Returns the info about a single slot
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the station
+          schema:
+            type: integer
+        - in: path
+          name: slotid
+          required: true
+          description: ID of the slot
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Slot returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/slot'
+                
+    patch:
+      description: Changes the state of the slot (free/occupied)
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          description: ID of the station
+          schema:
+            type: integer
+        - in: path
+          name: slotid
+          required: true
+          description: ID of the slot
+          schema:
+            type: integer
+      requestBody:
+        description: New state to update the current one
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                state:
+                  type: boolean
+                  description: New state for the slot
+              required: 
+                - state
+      responses:
+        200:
+          description: Slot state updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  state:
+                    type: boolean
+  
+  /reports:
+    get:
+      description: Returns the list of reports
+      responses:
+        200:
+          description: List of reports returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reports'
+    
+    post:
+      description: Adds a new report
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description: 
+                  type: string
+                photo:
+                  type: string
+                contacts:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                    phone:
+                      type: number
+      responses:
+        200:
+          description: New report created successfully
+  
+  /reports/{id}:
+    get:
+      description: Returns info about a specific report
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the report
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Report returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/report'
+    
+    patch:
+      description: Change the state of the report (reported/resolved)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the report
+          schema:
+            type: integer
+      requestBody:
+        description: New state to update the current one
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                state:
+                  type: boolean
+              required:
+                - state
+      responses:
+        200:
+          description: Report state updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  state:
+                    type: boolean
+          
     
 
-# DEFINIZIONE RISORSE:
+# DEFINING RESOURCES:
 components:
   schemas:
-    parcheggio:
+    station:
       type: object
       properties:
-        nome:
+        name:
           type: string
         address:
           $ref: '#/components/schemas/address'
-        numPosti:
+        numSlots:
           type: number
-        # togli stato e cambialo con attivo e segnalato con boolean
-        stato:
+        # Remove state and change it to active and reported with boolean
+        state:
           type: string
-          enum: [attivo, disattivo, segnalato]
-        listaPosti:
+          enum: [active, inactive, reported]
+        slotList:
           type: array
           items:
-            $ref: '#/components/schemas/posto'
-        listaSegnalazioni:
-          type: array
-          items:
-            $ref: '#/components/schemas/segnalazione'
+            $ref: '#/components/schemas/slot'
+        reportList:
+          $ref: '#/components/schemas/reports'
     
-    parcheggi:
+    stations:
       type: array
       items:
-        $ref: '#/components/schemas/parcheggio'
+        $ref: '#/components/schemas/station'
             
-    posto:
+    slot:
       type: object
       properties:
-        stato:
+        state:
           type: boolean
-        categoria:
+        category:
           type: string
-          enum: [libero, sharing, privato]
-        utilizzi:
+          enum: [free, sharing, private]
+        uses:
           type: array
           items:
-            $ref: '#/components/schemas/utilizzo'
+            $ref: '#/components/schemas/use'
         
         
-    segnalazione:
+    report:
       type: object
       properties:
-        stato:
+        state:
           type: boolean
-        descrizione:
+        description:
           type: string
-        foto:
+        photo:
           type: string
-        contatti:
+        contacts:
           type: object
           properties:
-            mail:
+            email:
               type: string
-            telefono:
+            phone:
               type: number
+    
+    reports:
+      type: array
+      items:
+        $ref: '#/components/schemas/report'
               
     address:
       type: object
       properties:
-        via:
+        street:
           type: string
-        num:
+        number:
           type: number
-        comune:
+        city:
           type: string
-        cap:
+        zipCode:
           type: number
-        long:
+        longitude:
           type: number
-        lat: 
+        latitude: 
            type: number
            
-    utilizzo:
+    use:
       type: object
       properties:
-        idUtente:
+        userId:
           type: number
         timestamp:
           type: number
-        servizio:
+        service:
           type: string
-          
-          
-          
-          
-          
-          
