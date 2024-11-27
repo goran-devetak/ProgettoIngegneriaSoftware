@@ -1,0 +1,11 @@
+{
+  "/api/stations/route": "app/api/stations/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/reports/route": "app/api/reports/route.js",
+  "/(pages)/page": "app/(pages)/page.js",
+  "/(pages)/home/page": "app/(pages)/home/page.js",
+  "/(pages)/advanced/page": "app/(pages)/advanced/page.js",
+  "/(pages)/(listable)/reports/page": "app/(pages)/(listable)/reports/page.js",
+  "/(pages)/(listable)/stations/page": "app/(pages)/(listable)/stations/page.js",
+  "/(pages)/(listable)/statistics/page": "app/(pages)/(listable)/statistics/page.js"
+}
