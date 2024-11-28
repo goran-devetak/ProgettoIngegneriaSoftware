@@ -1,16 +1,16 @@
 import dbConnect from "@/app/lib/dbConnect";
-import Parcheggio from "@/app/lib/models/Parcheggio";
+import StationModel from "@/app/lib/models/station/Station.model";
 import { NextResponse } from "next/server";
 
 
 export async function GET(){
     await dbConnect();
     try{
-        const parcheggi = await Parcheggio.find({});
+        const parcheggi = await StationModel.find({});
 
         return NextResponse.json(parcheggi);
     }catch(err: any){
         return NextResponse.json({error: err.message})
     }
-
 }
+

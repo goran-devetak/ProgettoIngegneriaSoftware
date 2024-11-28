@@ -16,11 +16,10 @@
       "static/chunks/main-app.js",
       "static/chunks/app/(pages)/page.js"
     ],
-    "/(pages)/home/page": [
+    "/(pages)/advanced/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/(pages)/home/page.css",
-      "static/chunks/app/(pages)/home/page.js"
+      "static/chunks/app/(pages)/advanced/page.js"
     ],
     "/(pages)/(listable)/layout": [
       "static/chunks/webpack.js",
@@ -37,30 +36,35 @@
       "static/chunks/main-app.js",
       "static/chunks/app/api/stations/route.js"
     ],
-    "/(pages)/(listable)/reports/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(pages)/(listable)/reports/page.js"
-    ],
     "/api/reports/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/reports/route.js"
     ],
-    "/(pages)/(listable)/statistics/page": [
+    "/api/advanced/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/(pages)/(listable)/statistics/page.js"
+      "static/chunks/app/api/advanced/route.js"
     ],
-    "/(pages)/advanced/page": [
+    "/api/stations/[stationID]/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/(pages)/advanced/page.js"
+      "static/chunks/app/api/stations/[stationID]/route.js"
     ],
-    "/_not-found/page": [
+    "/(pages)/(listable)/reports/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/_not-found/page.js"
+      "static/chunks/app/(pages)/(listable)/reports/page.js"
+    ],
+    "/api/stations/[stationID]/[slotID]/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/stations/[stationID]/[slotID]/route.js"
+    ],
+    "/api/reports/[reportID]/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/reports/[reportID]/route.js"
     ]
   }
 }
