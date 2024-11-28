@@ -24,6 +24,8 @@ paths:
                 $ref: '#/components/schemas/stations'
         404:
           description: Page not found
+        500:
+          description: Internal server error
           
   /advanced:           
     post:
@@ -47,6 +49,8 @@ paths:
       responses:
         200:
           description: New station added successfully
+        400:
+          description: Missing required fields
         
   /stations/{id}:
     get:
@@ -65,6 +69,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/station'
+        404:
+          description: Station not found
+          # I probably need to create a schema error that I return when error occurs
+        500:
+          description: Internal server error
             
     patch:
       description: Changes the state of the station (active/inactive/reported)
@@ -102,6 +111,12 @@ paths:
                   state:
                     type: string
                     enum: [active, inactive, reported]
+        400:
+          description: Invalid state
+        404:
+          description: Updated station not found
+        500:
+          description: Internal server error
                     
     post:
       description: Adds a slot to the current station
@@ -125,6 +140,12 @@ paths:
       responses:
         200:
           description: New slot added successfully
+        400:
+          description: Invalid category
+        404:
+          description: Updated station not found
+        500:
+          description: Internal server error
   
   /stations/{id}/{slotid}:
     get:
@@ -149,6 +170,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/slot'
+        404:
+          description: Slot or Station not found
+        500:
+          description: Internal server error
                 
     patch:
       description: Changes the state of the slot (free/occupied)
@@ -190,6 +215,10 @@ paths:
                     type: integer
                   state:
                     type: boolean
+        400:
+          description: Invalid state
+        404:
+          description: Station or Slot not found
   
   /reports:
     get:
@@ -201,6 +230,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/reports'
+        404:
+          description: Reports not found
     
     post:
       description: Adds a new report
@@ -225,6 +256,10 @@ paths:
       responses:
         200:
           description: New report created successfully
+        400:
+          description: Missing required fields
+        500:
+          description: Internal server error
   
   /reports/{id}:
     get:
@@ -243,6 +278,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/report'
+        404:
+          description: Report not found
+        500: 
+          description: Internal server error
     
     patch:
       description: Change the state of the report (reported/resolved)
@@ -277,6 +316,12 @@ paths:
                     type: integer
                   state:
                     type: boolean
+        400:
+          description: State not valid
+        404:
+          description: Report not found
+        500:
+          description: Internal server error
           
     
 
