@@ -25,7 +25,10 @@ export default function StaitionDiv() {
 
 export default async function StationDiv(){
     const fetchParcheggi = async() => {
-        const res = await fetch("http://localhost:3000/api/stations");
+        const res = await fetch("http://localhost:3000/api/stations", {
+            method: "GET",
+            cache: "no-store",
+        });
         const parcheggi = await res.json();
         return parcheggi;
     }
@@ -37,8 +40,8 @@ export default async function StationDiv(){
             <h1>Parcheggi</h1>
             {parcheggi.map((parcheggio: any) => (
                 <div key={parcheggio._id}>
-                    <h2>{parcheggio.nome}</h2>
-                    <p>{parcheggio.numPosti}</p>
+                    <h2>{parcheggio.name}</h2>
+                    <p>{parcheggio.numSlots}</p>
                 </div>
             ))}
         </div>

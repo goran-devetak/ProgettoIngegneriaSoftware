@@ -44,10 +44,10 @@ export default async function ReportDiv(){
       <h1> Segnalazioni </h1>
       {reports.map((report: any) => (
         <div key={report._id}>
-          <h2>{report.descrizione}</h2>
-          <p>{report.foto}</p>
-          <p>{report.contatti.mail}</p>
-          <p>{report.contatti.telefono}</p>
+          <h2>{report.description}</h2>
+          <p>{report.photo}</p>
+          <p>{report.contacts.email}</p>
+          <p>{report.contacts.phone}</p>
         </div>
       ))
       }
