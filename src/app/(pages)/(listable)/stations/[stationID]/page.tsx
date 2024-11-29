@@ -1,35 +1,56 @@
-import { Station } from "@/app/models/schema/Station";
-import { data } from "@/app/models/StationData";
+import { Station } from "@/app/lib/models/station/Station";
 
 interface Props {
-    params: {
-        stationID: number
-    }
-}
-export const metadata = {
-    title: 'Info Parcheggio',
+    params: { stationID: string };
 }
 
-function getStation(id: number): Station | null {
-    return data.find(station => station.id == id) || null;
-}
+export const getStation = async (id: string): Promise<Station | undefined> => {
+    try {
+        const res = await fetch(`http://localhost:3000/api/stations/${id}`, {
+            method: "GET",
+            cache: "no-store",
+        });
+
+        if (!res.ok) {
+            console.error(`Failed to fetch station with id ${id}:`, res.statusText);
+            return undefined;
+        }
+
+        const data = await res.json();
+        return data.success ? data.data : undefined;
+    } catch (error) {
+        console.error(`Error fetching station with id ${id}:`, error);
+        return undefined;
+    }
+};
+
 
 export default async function StationPage({ params }: Props) {
-    const { stationID } = await params;
-    const station = getStation(stationID);
-    if (!station) throw new Error("Errore nel caricare la stazione");
+    const{stationID} = await params;
+
+    // Fetch the station data
+    const station: Station | undefined = await getStation(stationID);
+
+    // Handle not found or error cases
+    if (!station) {
+        return (
+            <div className="py-5 text-center">
+                <h1 className="text-3xl font-bold">Parcheggio non trovato</h1>
+                <p className="text-gray-500">Il parcheggio richiesto non esiste o non è disponibile.</p>
+            </div>
+        );
+    }
+
     return (
         <div className="flex flex-col items-center py-5">
             <h1 className="text-3xl font-bold">{station.name}</h1>
-            <p className="text-sm">{`${station.address.stAddress}, ${station.address.stNumber} (${station.address.cap})`}</p>
+            <p className="text-sm">{`${station.address.street}, ${station.address.number} (${station.address.zipCode})`}</p>
             <p className="text-sm">{station.numSlots} posti</p>
             <div className="flex space-x-7 my-5">
-                <button className="font-bold py-2 px-4 rounded bg-blue-500 " >Assegna posti</button>
-                <button type="button" className="font-bold py-2 px-4 rounded bg-orange-500">Visualizza segnalazioni</button>
+                <button className="font-bold py-2 px-4 rounded bg-blue-500 text-white">
+                    Assegna posti
+                </button>
             </div>
         </div>
-
-
-    )
+    );
 }
-

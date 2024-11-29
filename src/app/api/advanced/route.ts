@@ -8,20 +8,23 @@ export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    const { name, address, num_slots, state } = await req.json();
+    const { name, address, numSlots, state, reported } = await req.json();
 
-    if (!name || !address || num_slots === undefined || !state) {
+    /*
+    if (!name || !address || num_slots === undefined || !state || !reported) {
       return NextResponse.json(
         { success: false, error: 'Missing required fields' },
         { status: 400 }
       );
     }
+      */
 
     const newStation = new StationModel({
       name,
       address,
-      numSlots: num_slots,
+      numSlots: numSlots,
       state,
+      reported,
       slotList: [],
       reportList: [], 
     });

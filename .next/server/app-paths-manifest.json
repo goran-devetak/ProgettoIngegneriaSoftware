@@ -1,8 +1,8 @@
 {
+  "/api/stations/route": "app/api/stations/route.js",
   "/api/reports/route": "app/api/reports/route.js",
-  "/_not-found/page": "app/_not-found/page.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/(pages)/page": "app/(pages)/page.js",
+  "/api/stations/[stationID]/route": "app/api/stations/[stationID]/route.js",
   "/(pages)/(listable)/stations/page": "app/(pages)/(listable)/stations/page.js",
-  "/(pages)/(listable)/reports/page": "app/(pages)/(listable)/reports/page.js"
+  "/(pages)/(listable)/reports/page": "app/(pages)/(listable)/reports/page.js",
+  "/(pages)/(listable)/stations/[stationID]/page": "app/(pages)/(listable)/stations/[stationID]/page.js"
 }

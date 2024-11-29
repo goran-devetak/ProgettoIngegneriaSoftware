@@ -1,22 +1,20 @@
-import { Station } from "../../models/schema/Station";
+import { Station } from "@/app/lib/models/station/Station";
 import StationCardComponent from "./StationCard";
+import mongoose, { mongo } from 'mongoose';
 
 interface StationListProps {
     stations: Station[];
-    lowerLimit: number;
-    upperLimit: number;
 }
 
-const StationList: React.FC<StationListProps> = ({ stations, lowerLimit, upperLimit }) => {
+
+const StationList: React.FC<StationListProps> = ({ stations}) => {
+
     let counter = 0;
     return (
         <div className="flex flex-col gap-4 items-center justify-center w-screen h-full max-w-9xl">
             {stations.map((station) => {
-                if (counter < upperLimit) {
-                    counter++;
-                    return <StationCardComponent key={station.id} station={station} />;
-                }
-                return null;
+            
+                return <StationCardComponent key={(station._id as mongoose.Types.ObjectId).toString()} station={station} />;
             })}
         </div>
     );

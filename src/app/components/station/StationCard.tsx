@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Station } from "../../models/schema/Station";
+import {Station} from "@/app/lib/models/station/Station";
 import clsx from "clsx";
 
 interface StationCardProps {
@@ -7,19 +7,24 @@ interface StationCardProps {
 }
 
 const StationCardComponent: React.FC<StationCardProps> = ({ station }) => {
-    const { state, name, address, numSlots, id } = station;
+    const { state, reported, name, address, numSlots, _id } = station;
 
-    const colorMap: { [key: string]: { color: string; text: string } } = {
-        Active: { color: "text-green-600", text: "Attivo" },
-        Inactive: { color: "text-red-600", text: "Non attivo" },
-        Default: { color: "text-orange-600", text: "Segnalato" }
-    };
+    let color, text;
 
-    const { color, text } = colorMap[state] || colorMap.Default;
+    if(!state){
+        color = "text-red-600";
+        text = "Non attivo";
+    }else if(reported){
+        color = "text-orange-600";
+        text = "Segnalato";
+    }else{
+        color = "text-green-600";
+        text = "Attivo";
+    }
 
     return (
         <Link
-            href={`./stations/${id}`}
+            href={`./stations/${_id}`}
             className="rounded-md w-1/2 grid grid-cols-12 bg-white shadow p-3 gap-2 items-center hover:shadow-lg transition delay-150 duration-300 ease-in-out hover:scale-105 transform"
         >
             <div className="col-span-10">
@@ -29,7 +34,7 @@ const StationCardComponent: React.FC<StationCardProps> = ({ station }) => {
                 </div>
                 <div>
                     <p className="text-sm text-gray-800 font-light">
-                        {`${address.stAddress}, ${address.stNumber} (${address.cap})`}
+                        {`${address.street}, ${address.number} (${address.zipCode})`}
                     </p>
                 </div>
             </div>

@@ -7,7 +7,8 @@ export interface Station extends Document{
     name: string;
     address: Address;
     numSlots: number;
-    state: 'active' | 'inactive' | 'reported';
+    state: boolean;
+    reported: boolean;
     slotList: Slot[];
     reportList: Report[];
   }
@@ -16,7 +17,8 @@ export interface Station extends Document{
     name: { type: String, required: true },
     address: { type: AddressSchema, required: true },
     numSlots: { type: Number, required: true },
-    state: { type: String, enum: ['active', 'inactive', 'reported'], required: true },
+    state: { type: Boolean, required: true},
+    reported: {type: Boolean, required: true},
     slotList: { type: [SlotSchema], default: [] },
     reportList: { type: [ReportSchema], default: [] },
   });
