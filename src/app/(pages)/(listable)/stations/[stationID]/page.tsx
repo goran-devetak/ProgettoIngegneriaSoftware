@@ -1,35 +1,16 @@
 import { Station } from "@/app/lib/models/station/Station";
-
+import {getStationByID} from "@/app/lib/functions/stationFunctions";
 interface Props {
     params: { stationID: string };
 }
 
-export const getStation = async (id: string): Promise<Station | undefined> => {
-    try {
-        const res = await fetch(`http://localhost:3000/api/stations/${id}`, {
-            method: "GET",
-            cache: "no-store",
-        });
-
-        if (!res.ok) {
-            console.error(`Failed to fetch station with id ${id}:`, res.statusText);
-            return undefined;
-        }
-
-        const data = await res.json();
-        return data.success ? data.data : undefined;
-    } catch (error) {
-        console.error(`Error fetching station with id ${id}:`, error);
-        return undefined;
-    }
-};
 
 
 export default async function StationPage({ params }: Props) {
     const{stationID} = await params;
 
     // Fetch the station data
-    const station: Station | undefined = await getStation(stationID);
+    const station: Station | undefined = await getStationByID(stationID);
 
     // Handle not found or error cases
     if (!station) {

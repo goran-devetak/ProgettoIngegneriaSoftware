@@ -8,8 +8,19 @@ import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import { data } from "@/app/models/StationData";
-import StationMarker from '../models/StationMarker';
+import StationMarker from './map/StationMarker';
+import { getAllStations } from '../lib/functions/stationFunctions';
+import { Station } from '../lib/models/station/Station';
+
+const data = await getAllStations();
+
+function getColorFromStation(s:Station):string{
+    if(s.reported){
+        return 'orange';
+    }else if(s.state){
+        return 'green';
+    }else return 'red';
+}
 
 export default function MyMap() {
     const mapRef = useRef(null);
@@ -42,19 +53,11 @@ export default function MyMap() {
 
         // Source and layer for the markers
         const markerSource = new VectorSource();
-        const markerLayer = new VectorLayer({
-            source: markerSource
-        });
+        const markerLayer = new VectorLayer({source: markerSource});
 
-        const colorMap: { [key: string]: string } = {
-            'Active': 'green',
-            'Inactive': 'red',
-            'Reported': 'orange'
-        };
-
-        // Add markers to the map
+    
         data.forEach(station => {
-            const feature = new StationMarker(station.id, station.address.lat, station.address.lng, 7, colorMap[station.state]);
+            const feature = new StationMarker(station.id, station.address.latitude, station.address.longitude, 7, getColorFromStation(station));
             markerSource.addFeature(feature);
         });
         map.addLayer(markerLayer);
