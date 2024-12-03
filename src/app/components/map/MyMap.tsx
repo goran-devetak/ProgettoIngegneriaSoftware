@@ -8,18 +8,18 @@ import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import StationMarker from './map/StationMarker';
-import { getAllStations } from '../lib/functions/stationFunctions';
-import { Station } from '../lib/models/station/Station';
+import StationMarker from './StationMarker';
+import { getAllStations } from '../../lib/functions/stationFunctions';
+import { Station } from '../../lib/models/station/Station';
 
 const data = await getAllStations();
 
 function getColorFromStation(s:Station):string{
-    if(s.reported){
+    if(!s.state){
+        return 'red';
+    }else if(s.reported){
         return 'orange';
-    }else if(s.state){
-        return 'green';
-    }else return 'red';
+    }else return 'green';
 }
 
 export default function MyMap() {

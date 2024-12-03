@@ -1,5 +1,5 @@
 import { Metadata } from "next"
-import MyMap from "../../components/MyMap"
+import MyMap from "../../components/map/MyMap"
 
 export const metadata: Metadata = {
     title: "Home"
