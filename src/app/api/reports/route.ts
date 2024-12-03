@@ -1,5 +1,6 @@
 import dbConnect from "@/app/lib/dbConnect";
 import ReportModel from "@/app/lib/models/report/Report.model";
+import StationModel from "@/app/lib/models/station/Station.model";
 import { NextResponse } from "next/server";
 
 
@@ -18,18 +19,38 @@ export async function POST(req: Request) {
     try {
       await dbConnect();
 
-      const { description, photo, contacts } = await req.json();
-  
+      const { description, photo, contacts, stationID } = await req.json();
+
       const newReport = new ReportModel({
         description,
         photo,
         contacts,
         state: false,
       });
+
+      const updatedStation = await StationModel.findByIdAndUpdate(
+        stationID,
+        {$push: {reportList: newReport}},
+        {new: true}
+      );
+
+      if (!updatedStation) {
+        return NextResponse.json(
+          { success: false, message: 'Station not found' },
+          { status: 404 }
+        );
+      }
   
       await newReport.save();
 
-      return NextResponse.json({ message: 'New report created successfully', report: newReport });
+      return NextResponse.json(
+        {
+          success: true,
+          stationID: updatedStation._id,
+          reportList: updatedStation.reportList,
+        },
+        {status: 200}
+      );
     } catch (error: any) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }

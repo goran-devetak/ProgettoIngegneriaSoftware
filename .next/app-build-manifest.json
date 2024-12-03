@@ -31,6 +31,26 @@
       "static/chunks/main-app.js",
       "static/chunks/app/api/stations/route.js"
     ],
+    "/(pages)/(listable)/reports/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(pages)/(listable)/reports/page.js"
+    ],
+    "/api/reports/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/reports/route.js"
+    ],
+    "/(pages)/(listable)/statistics/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(pages)/(listable)/statistics/page.js"
+    ],
+    "/(pages)/advanced/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(pages)/advanced/page.js"
+    ],
     "/(pages)/(listable)/stations/[stationID]/error": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -50,16 +70,6 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/stations/[stationID]/route.js"
-    ],
-    "/(pages)/(listable)/reports/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(pages)/(listable)/reports/page.js"
-    ],
-    "/api/reports/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/reports/route.js"
     ]
   }
 }
