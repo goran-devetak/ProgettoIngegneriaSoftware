@@ -8,7 +8,7 @@ interface ReportCardProps {
 }
 
 const ReportCardComponent: React.FC<ReportCardProps> = ({ report }) => {
-    const { stationId, description, timestamp, contacts, _id , state} = report;
+    const { stationId, description, timestamp, contacts, _id, state } = report;
     return (
         <Link
             href={`./reports/${_id}`}
@@ -29,8 +29,10 @@ const ReportCardComponent: React.FC<ReportCardProps> = ({ report }) => {
                     <div>{contacts?.phone}</div>
                 </div>
                 <div>
-                    <p>Stato</p>
-                    {state?"Risolta":"Non risolta"}
+                    <p>
+                        Stato: 
+                        {state ? " Risolta" : " Non risolta"}
+                    </p>
                 </div>
             </div>
         </Link>

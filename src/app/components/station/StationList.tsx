@@ -1,6 +1,6 @@
 import { Station } from "@/app/lib/models/station/Station";
 import StationCardComponent from "./StationCard";
-import mongoose, { mongo } from 'mongoose';
+import mongoose from 'mongoose';
 
 interface StationListProps {
     stations: Station[];

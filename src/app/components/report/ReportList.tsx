@@ -1,5 +1,5 @@
 import { Report } from "@/app/lib/models/report/Report";
-import mongoose, { mongo } from 'mongoose';
+import mongoose from 'mongoose';
 import ReportCardComponent from "./ReportCard";
 
 interface ReportListProps {
@@ -7,9 +7,7 @@ interface ReportListProps {
 }
 
 
-const ReportList: React.FC<ReportListProps> = ({ reports}) => {
-
-    let counter = 0;
+const ReportList: React.FC<ReportListProps> = ({reports}) => {
     return (
         <div className="flex flex-col gap-4 items-center justify-center w-screen h-full max-w-9xl">
             {reports.map((report) => {
