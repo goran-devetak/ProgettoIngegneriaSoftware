@@ -34,38 +34,38 @@ export default function MyMap() {
             ...fromLonLat(trentoCoords['SO']),
             ...fromLonLat(trentoCoords['NE'])
         ];
-
-        const map = new Map({
-            target: mapRef.current,
-            layers: [
-                new TileLayer({
-                    source: new OSM()
+        if (mapRef.current) {
+            const map = new Map({
+                target: mapRef.current,
+                layers: [
+                    new TileLayer({
+                        source: new OSM()
+                    })
+                ],
+                view: new View({
+                    center: fromLonLat([11.1217, 46.0667]),
+                    zoom: 14,
+                    maxZoom: 18,
+                    minZoom: 10,
+                    extent: trentoExtent,
                 })
-            ],
-            view: new View({
-                center: fromLonLat([11.1217, 46.0667]),
-                zoom: 14,
-                maxZoom: 18,
-                minZoom: 10,
-                extent: trentoExtent,
-            })
-        });
+            });
+            // Source and layer for the markers
+            const markerSource = new VectorSource();
+            const markerLayer = new VectorLayer({ source: markerSource });
 
-        // Source and layer for the markers
-        const markerSource = new VectorSource();
-        const markerLayer = new VectorLayer({ source: markerSource });
-
-        if (data) {
-            data.forEach(station => {
-                const feature = new StationMarker(station.id, station.address.latitude, station.address.longitude, 7, getColorFromStation(station));
-                markerSource.addFeature(feature);
+            if (data) {
+                data.forEach(station => {
+                    const feature = new StationMarker(station.id, station.address.latitude, station.address.longitude, 7, getColorFromStation(station));
+                    markerSource.addFeature(feature);
+                }
+                );
             }
-            );
+            map.addLayer(markerLayer);
+            return () => {
+                map.setTarget();
+            };
         }
-        map.addLayer(markerLayer);
-        return () => {
-            map.setTarget();
-        };
     }, []);
 
     return <div ref={mapRef} className="w-full h-full" />;
