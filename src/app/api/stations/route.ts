@@ -7,6 +7,7 @@ export async function GET(req: Request){
     await dbConnect();
     try{
         const { searchParams } = new URL(req.url);
+        
         const isActive = searchParams.get("isActive"); // parcheggio attivo/non attivo
         const reported = searchParams.get("reported"); // parcheggio segnalato/non segnalato
 
@@ -15,7 +16,7 @@ export async function GET(req: Request){
         if (reported !== null) filter.reported = reported === "true"; //Greater Than/Equals
         
         const parcheggi = await StationModel.find(filter).select('-slotList');
-
+        console.log(NextResponse.json(parcheggi));
         return NextResponse.json(parcheggi);
     }catch(err: any){
         return NextResponse.json({error: err.message})

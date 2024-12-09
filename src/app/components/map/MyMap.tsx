@@ -14,12 +14,12 @@ import { Station } from '../../lib/models/station/Station';
 
 const data = await getAllStations();
 
-function getColorFromStation(s:Station):string{
-    if(!s.state){
+function getColorFromStation(s: Station): string {
+    if (!s.isActive) {
         return 'red';
-    }else if(s.reported){
+    } else if (s.reported) {
         return 'orange';
-    }else return 'green';
+    } else return 'green';
 }
 
 export default function MyMap() {
@@ -53,13 +53,15 @@ export default function MyMap() {
 
         // Source and layer for the markers
         const markerSource = new VectorSource();
-        const markerLayer = new VectorLayer({source: markerSource});
+        const markerLayer = new VectorLayer({ source: markerSource });
 
-    
-        data.forEach(station => {
-            const feature = new StationMarker(station.id, station.address.latitude, station.address.longitude, 7, getColorFromStation(station));
-            markerSource.addFeature(feature);
-        });
+        if (data) {
+            data.forEach(station => {
+                const feature = new StationMarker(station.id, station.address.latitude, station.address.longitude, 7, getColorFromStation(station));
+                markerSource.addFeature(feature);
+            }
+            );
+        }
         map.addLayer(markerLayer);
         return () => {
             map.setTarget();

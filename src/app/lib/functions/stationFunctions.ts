@@ -10,7 +10,6 @@ export async function getAllStations(): Promise<Station[] | undefined> {
         if (!res.ok) {
             throw new Error("Failed to fetch stations");
         }
-
         return res.json(); // Call res.json() to resolve the response
     } catch (error) {
         console.error("Error fetching stations:", error);

@@ -7,11 +7,11 @@ interface StationCardProps {
 }
 
 const StationCardComponent: React.FC<StationCardProps> = ({ station }) => {
-    const { state, reported, name, address, numSlots, _id } = station;
+    const { isActive, reported, name, address, numSlots, _id } = station;
 
     let color, text;
 
-    if(!state){
+    if(!isActive){
         color = "text-red-600";
         text = "Non attivo";
     }else if(reported){
