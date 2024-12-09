@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/app/lib/dbConnect';
 import ReportModel from '@/app/lib/models/report/Report.model';
 
+//richiede le informazioni della singola segnalazione
 export async function GET(req: Request, { params }: { params: { reportID: string } }) {
   try {
     await dbConnect();
@@ -27,15 +28,15 @@ export async function PATCH(req: Request, { params }: { params: { reportID: stri
       const reportId = params.reportID;
   
       const body = await req.json();
-      const { state } = body;
+      const { isSolved } = body;
   
-      if (typeof state !== 'boolean') {
-        return NextResponse.json({ error: 'State must be a boolean' }, { status: 400 });
+      if (typeof isSolved !== 'boolean') {
+        return NextResponse.json({ error: 'isSolved must be a boolean' }, { status: 400 });
       }
   
       const report = await ReportModel.findByIdAndUpdate(
         reportId,
-        { state },
+        { isSolved },
         { new: true }
       );
   
@@ -45,7 +46,7 @@ export async function PATCH(req: Request, { params }: { params: { reportID: stri
   
       return NextResponse.json({
         id: report._id,
-        state: report.state
+        isSolved: report.isSolved
       });
     } catch (error: any) {
       return NextResponse.json({ error: error.message }, { status: 500 });

@@ -4,11 +4,32 @@ import StationModel from "@/app/lib/models/station/Station.model";
 import { NextResponse } from "next/server";
 
 
-export async function GET(){
+export async function GET(req: Request){
     await dbConnect();
     try{
-        const reports = await ReportModel.find({});
-        return NextResponse.json(reports);
+      const { searchParams } = new URL(req.url);
+      const isSolved = searchParams.get("isSolved"); // Risolto o non risolto
+      const timestamp = searchParams.get("timestamp"); // Timestamp minimo
+      const stationId = searchParams.get("stationId"); // ID della stazione
+
+      // Creazione del filtro in base ai parametri forniti
+      const filter: any = {};
+      if (isSolved !== null) filter.isSolved = isSolved === "true"; // Confronta come booleano
+      if (timestamp !== null) filter.timestamp = { $gte: Number(timestamp) }; //Greater Than/Equals
+      if (stationId !== null) filter.stationId = stationId;
+
+      const reports = await ReportModel.find(filter).select('-description -photo -contacts');
+
+      // Controllo per array vuoto
+      if (reports.length === 0) {
+          return NextResponse.json(
+              { message: "No reports found", reports: [] },
+              { status: 200 }
+          );
+      }
+
+      // Risposta con i risultati
+      return NextResponse.json(reports, { status: 200 });
     }catch(err: any){
         return NextResponse.json({error: err.message})
     }
@@ -19,18 +40,21 @@ export async function POST(req: Request) {
     try {
       await dbConnect();
 
-      const { description, photo, contacts, stationID } = await req.json();
+      const { title, description, photo, timestamp, contacts, stationId } = await req.json();
 
       const newReport = new ReportModel({
+        title,
         description,
         photo,
+        timestamp,
         contacts,
-        state: false,
+        stationId,
+        isSolved: false,
       });
 
       const updatedStation = await StationModel.findByIdAndUpdate(
-        stationID,
-        {$push: {reportList: newReport}},
+        stationId,
+        {reported: true},
         {new: true}
       );
 
@@ -47,7 +71,6 @@ export async function POST(req: Request) {
         {
           success: true,
           stationID: updatedStation._id,
-          reportList: updatedStation.reportList,
         },
         {status: 200}
       );
