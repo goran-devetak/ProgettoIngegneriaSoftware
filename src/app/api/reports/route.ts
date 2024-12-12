@@ -18,7 +18,7 @@ export async function GET(req: Request){
       if (timestamp !== null) filter.timestamp = { $gte: Number(timestamp) }; //Greater Than/Equals
       if (stationId !== null) filter.stationId = stationId;
 
-      const reports = await ReportModel.find(filter).select('-description -photo -contacts');
+      const reports = await ReportModel.find(filter);
 
       // Controllo per array vuoto
       if (reports.length === 0) {

@@ -8,7 +8,7 @@ interface ReportCardProps {
 }
 
 const ReportCardComponent: React.FC<ReportCardProps> = ({ report }) => {
-    const { stationId, description, timestamp, contacts, _id, state } = report;
+    const { _id, description, timestamp, contacts, isSolved, title } = report;
     return (
         <Link
             href={`./reports/${_id}`}
@@ -16,8 +16,8 @@ const ReportCardComponent: React.FC<ReportCardProps> = ({ report }) => {
         >
             <div className="col-span-10">
                 <div className="flex space-x-1">
-                    <p className="text-black font-bold">{stationId}</p>
-                    <p className="text-gray-600 font-bold">{description}</p>
+                    <p className="text-black font-bold">{title}</p>
+                    <p className="text-gray-600 font-bold"> - {description}</p>
                 </div>
                 <div>
                     <p className="text-sm text-gray-800 font-light">
@@ -25,13 +25,13 @@ const ReportCardComponent: React.FC<ReportCardProps> = ({ report }) => {
                     </p>
                 </div>
                 <div>
-                    <div>{contacts?.email}</div>
-                    <div>{contacts?.phone}</div>
+                    <div>Email: {contacts?.email ? contacts?.email : "/"}</div>
+                    <div>Telefono: {contacts?.phone ? contacts?.phone : "/"}</div>
                 </div>
                 <div>
                     <p>
-                        Stato: 
-                        {state ? " Risolta" : " Non risolta"}
+                        Stato:
+                        {isSolved ? " Risolta" : " Non risolta"}
                     </p>
                 </div>
             </div>
