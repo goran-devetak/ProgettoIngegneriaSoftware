@@ -1,5 +1,10 @@
 import { Schema, Document } from 'mongoose';
 
+export interface Contact{
+  email?: string;
+  phone?:number;
+}
+
 export interface Report extends Document {
   stationId:string;
   title: string;
@@ -7,12 +12,7 @@ export interface Report extends Document {
   description: string;
   photo?: string;
   timestamp: number;
-  contacts?: {
-    type: {
-      email?: string;
-      phone?: number;
-    }
-  };
+  contacts?: Contact
 }
 
 export const ReportSchema = new Schema<Report>({

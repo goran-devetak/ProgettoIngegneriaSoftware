@@ -18,7 +18,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" >
-      <body className="vsc-initialized ">
+      <body className="vsc-initialized overflow-hidden">
         <MyNav />
         {children}
       </body>

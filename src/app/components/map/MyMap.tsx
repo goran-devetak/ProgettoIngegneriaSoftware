@@ -62,10 +62,10 @@ export default function MyMap() {
             if (data) {
                 data.forEach(station => {
                     const feature = new StationMarker(
-                        station.id, 
-                        station.address.latitude, 
-                        station.address.longitude, 
-                        10, 
+                        station.id,
+                        station.address.latitude,
+                        station.address.longitude,
+                        10,
                         getColorFromStation(station),
                         `../stations/${station._id}`
                     );
