@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import 'ol/ol.css';
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -24,6 +25,8 @@ function getColorFromStation(s: Station): string {
 
 export default function MyMap() {
     const mapRef = useRef(null);
+    const router = useRouter();
+
     const trentoCoords = {
         'SO': [11.01, 45.98],
         'NE': [11.24, 46.17]
@@ -34,6 +37,7 @@ export default function MyMap() {
             ...fromLonLat(trentoCoords['SO']),
             ...fromLonLat(trentoCoords['NE'])
         ];
+
         if (mapRef.current) {
             const map = new Map({
                 target: mapRef.current,
@@ -50,23 +54,47 @@ export default function MyMap() {
                     extent: trentoExtent,
                 })
             });
+
             // Source and layer for the markers
             const markerSource = new VectorSource();
             const markerLayer = new VectorLayer({ source: markerSource });
 
             if (data) {
                 data.forEach(station => {
-                    const feature = new StationMarker(station.id, station.address.latitude, station.address.longitude, 10, getColorFromStation(station));
+                    const feature = new StationMarker(
+                        station.id, 
+                        station.address.latitude, 
+                        station.address.longitude, 
+                        10, 
+                        getColorFromStation(station),
+                        `../stations/${station._id}`
+                    );
                     markerSource.addFeature(feature);
-                }
-                );
+                });
             }
+
             map.addLayer(markerLayer);
+
+            // Add click handler
+            map.on('click', (event) => {
+                const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
+                if (feature && feature instanceof StationMarker) {
+                    router.push(feature.getHref());
+                }
+            });
+
+            // Change cursor style when hovering markers
+            map.on('pointermove', (event) => {
+                const pixel = map.getEventPixel(event.originalEvent);
+                const hit = map.hasFeatureAtPixel(pixel);
+                map.getTarget().style.cursor = hit ? 'pointer' : '';
+            });
+
             return () => {
                 map.setTarget();
             };
         }
-    }, []);
+    }, [router]);
 
     return <div ref={mapRef} className="w-full h-full" />;
 }
