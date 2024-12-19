@@ -16,10 +16,10 @@ const data = await getAllStations();
 
 function getColorFromStation(s: Station): string {
     if (!s.isActive) {
-        return 'red';
+        return '#fba43c';
     } else if (s.reported) {
-        return 'orange';
-    } else return 'green';
+        return '#dc2626';
+    } else return '#16a34a';
 }
 
 export default function MyMap() {
@@ -56,7 +56,7 @@ export default function MyMap() {
 
             if (data) {
                 data.forEach(station => {
-                    const feature = new StationMarker(station.id, station.address.latitude, station.address.longitude, 7, getColorFromStation(station));
+                    const feature = new StationMarker(station.id, station.address.latitude, station.address.longitude, 10, getColorFromStation(station));
                     markerSource.addFeature(feature);
                 }
                 );
