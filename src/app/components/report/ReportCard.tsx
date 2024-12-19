@@ -1,6 +1,7 @@
 import React from "react";
 import { Report } from "../../lib/models/report/Report";
 import Link from "next/link";
+import { COLOR } from "../../constants"
 
 
 interface ReportCardProps {
@@ -9,6 +10,7 @@ interface ReportCardProps {
 
 const ReportCardComponent: React.FC<ReportCardProps> = ({ report }) => {
     const { _id, description, timestamp, contacts, isSolved, title } = report;
+    const col = "font-semibold "+(isSolved ? "text-mygreen" : "text-myred");
     return (
         <Link
             href={`./reports/${_id}`}
@@ -28,9 +30,9 @@ const ReportCardComponent: React.FC<ReportCardProps> = ({ report }) => {
                     <div>Email: {contacts?.email ? contacts?.email : "/"}</div>
                     <div>Telefono: {contacts?.phone ? contacts?.phone : "/"}</div>
                 </div>
-                <div>
-                    <p>
-                        Stato:
+                <div className="flex">
+                    <p>Stato: </p>
+                    <p className={col}>
                         {isSolved ? " Risolta" : " Non risolta"}
                     </p>
                 </div>

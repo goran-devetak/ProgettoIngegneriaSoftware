@@ -12,15 +12,15 @@ import VectorSource from 'ol/source/Vector';
 import StationMarker from './StationMarker';
 import { getAllStations } from '../../lib/functions/stationFunctions';
 import { Station } from '../../lib/models/station/Station';
-
+import {COLORS} from "../../constants"
 const data = await getAllStations();
 
 function getColorFromStation(s: Station): string {
     if (!s.isActive) {
-        return '#fba43c';
+        return COLORS.red;
     } else if (s.reported) {
-        return '#dc2626';
-    } else return '#16a34a';
+        return COLORS.orange;
+    } else return COLORS.green;
 }
 
 export default function MyMap() {

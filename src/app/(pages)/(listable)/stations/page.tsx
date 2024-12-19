@@ -1,11 +1,11 @@
 import { Metadata } from "next";
 import StationList from "@/app/components/station/StationList";
-import {getAllStations} from "@/app/lib/functions/stationFunctions";
+import { getAllStations } from "@/app/lib/functions/stationFunctions";
+import ListDiv from "../layout";
 
 export const metadata: Metadata = {
-    title: "Parcheggi",
+    title: "Lista Parcheggi",
 };
-    
 
 // Main Component
 export default async function StationDiv() {
@@ -13,24 +13,18 @@ export default async function StationDiv() {
 
     if (!stations || stations.length === 0) {
         return (
-            <div>
-                <h1 className="py-5 text-4xl text-center font-bold">
-                    Lista Parcheggi
-                </h1>
+            <>
                 <p className="text-center text-lg text-gray-500">
                     Nessun parcheggio disponibile al momento.
                 </p>
-            </div>
+            </>
         );
     }
-
-    return (
-        <div>
-            <h1 className="py-5 text-4xl text-center font-bold">
-                Lista Parcheggi
-            </h1>
-            <StationList stations={stations} />
-        </div>
-    );
+    else
+        return (
+            <ListDiv title={metadata.title}>
+                <StationList stations={stations} />
+            </ListDiv>
+        );
 }
 

@@ -1,5 +1,6 @@
 // tailwind.config.ts
 import type { Config } from 'tailwindcss';
+import { COLORS } from './src/app/constants';
 
 const config: Config = {
   content: [
@@ -12,8 +13,11 @@ const config: Config = {
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
-        mycyan: '#225361',
-        mycyansel:"#193e49",
+        mycyan: COLORS.mycyan,
+        mycyansel: COLORS.mycyansel,
+        myred: COLORS.red,
+        mygreen: COLORS.green,
+        myorange: COLORS.orange
       },
     },
   },

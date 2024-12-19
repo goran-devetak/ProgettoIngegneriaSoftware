@@ -1,10 +1,13 @@
 import { Station } from "@/app/lib/models/station/Station";
 import {getStationByID} from "@/app/lib/functions/stationFunctions";
+import { Metadata } from "next";
 interface Props {
     params: { stationID: string };
 }
 
-
+export const metadata: Metadata = {
+    title: "Visualizza parcheggio",
+};
 
 export default async function StationPage({ params }: Props) {
     const{stationID} = await params;

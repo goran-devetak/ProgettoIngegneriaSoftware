@@ -1,7 +1,6 @@
 import Link from "next/link";
 import {Station} from "@/app/lib/models/station/Station";
 import clsx from "clsx";
-
 interface StationCardProps {
     station: Station;
 }
@@ -12,13 +11,13 @@ const StationCardComponent: React.FC<StationCardProps> = ({ station }) => {
     let color, text;
 
     if(!isActive){
-        color = "text-red-600";
+        color = "text-myred";
         text = "Non attivo";
     }else if(reported){
-        color = "text-orange-600";
+        color = "text-myorange";
         text = "Segnalato";
     }else{
-        color = "text-green-600";
+        color = "text-mygreen";
         text = "Attivo";
     }
 

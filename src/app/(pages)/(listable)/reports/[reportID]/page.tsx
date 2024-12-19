@@ -1,9 +1,14 @@
 import { getReportByID } from "@/app/lib/functions/reportFunctions";
 import { Report } from "@/app/lib/models/report/Report";
+import { Metadata } from "next";
 
 interface Props {
     params: { reportID: string };
 }
+
+export const metadata: Metadata = {
+    title: "Visualizza segnalazione",
+};
 
 export default async function StationPage({ params }: Props) {
     const { reportID } = await params;
