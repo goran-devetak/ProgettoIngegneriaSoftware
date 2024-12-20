@@ -22,7 +22,7 @@ export default async function StationDiv() {
     }
     else
         return (
-            <ListDiv title={metadata.title}>
+            <ListDiv title={metadata.title?.toString()}>
                 <StationList stations={stations} />
             </ListDiv>
         );

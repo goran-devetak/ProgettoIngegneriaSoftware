@@ -1,7 +1,6 @@
 import React from "react";
 import { Report } from "../../lib/models/report/Report";
 import Link from "next/link";
-import { COLOR } from "../../constants"
 
 
 interface ReportCardProps {

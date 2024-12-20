@@ -87,7 +87,8 @@ export default function MyMap() {
             map.on('pointermove', (event) => {
                 const pixel = map.getEventPixel(event.originalEvent);
                 const hit = map.hasFeatureAtPixel(pixel);
-                map.getTarget().style.cursor = hit ? 'pointer' : '';
+                const t = map.getTarget();
+                if(t instanceof HTMLElement) t.style.cursor = hit ? 'pointer' : '';
             });
 
             return () => {

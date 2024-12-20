@@ -8,15 +8,10 @@ const COLORS = {
   
 
   const URLS = {
-    apiBase: "https://api.example.com",
-    homepage: "https://example.com",
-    github: "https://github.com/example",
+    homepage: "http://localhost:3000",
+    apis:"http://localhost:3000/api",
   };
+
   
-  const STRINGS = {
-    appName: "My Next.js App",
-    welcomeMessage: "Benvenuto nella mia applicazione!",
-  };
-  
-  export { COLORS, URLS, STRINGS };
+  export { COLORS, URLS };
   

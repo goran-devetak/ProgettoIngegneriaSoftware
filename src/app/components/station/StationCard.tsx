@@ -28,7 +28,7 @@ const StationCardComponent: React.FC<StationCardProps> = ({ station }) => {
         >
             <div className="col-span-10">
                 <div className="flex space-x-1">
-                    <p className="text-gray-600 font-bold">{name}:</p>
+                    <p className="font-bold">{name}:</p>
                     <p className={clsx("font-semibold", color)}>{text}</p>
                 </div>
                 <div>

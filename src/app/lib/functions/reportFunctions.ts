@@ -1,8 +1,9 @@
 import { Report } from "../models/report/Report";
+import {URLS} from "../../constants"
 
 export async function getAllStations(): Promise<Report[] | undefined> {
     try {
-        const res = await fetch("http://localhost:3000/api/reports", {
+        const res = await fetch(URLS.apis+"/reports", {
             method: "GET",
             cache: "no-store",
         });
@@ -20,7 +21,7 @@ export async function getAllStations(): Promise<Report[] | undefined> {
 
 export async function getReportByID(id: string): Promise<Report | undefined> {
     try {
-        const res = await fetch(`http://localhost:3000/api/reports/${id}`, {
+        const res = await fetch(URLS.apis+`/reports/${id}`, {
             method: "GET",
             cache: "no-store",
         });
