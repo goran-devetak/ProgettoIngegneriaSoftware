@@ -42,7 +42,7 @@ export default class StationMarker extends Feature {
         this.set('htmlId', stationName);
     }
 
-    private getStationName(): String{
+    public getStationName(): String{
         return this.stationName;
     }
 

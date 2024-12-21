@@ -93,12 +93,12 @@ export default function MyMap() {
                 if (t instanceof HTMLElement) {
                     if (hit) {
                         t.style.cursor = 'pointer';
-                        const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
-                        if(feature){
-                            /* TODO - IMPLEMENT INFO ON HOVERING HERE */
-                            alert(feature.getStationName());
-                        }
-                        
+                        const feature: StationMarker = map.forEachFeatureAtPixel(event.pixel, (feature) => feature) as StationMarker;
+
+                        /* TODO - IMPLEMENT INFO ON HOVERING HERE */
+                        alert(feature.getStationName());
+
+
                     } else {
                         t.style.cursor = '';
                     }
