@@ -1,4 +1,4 @@
-import { getReportByID } from "@/app/lib/functions/reportFunctions";
+import { getReportByID } from "@/app/lib/functions/fetching/reportFunctions";
 import { Report } from "@/app/lib/models/report/Report";
 import { Metadata } from "next";
 

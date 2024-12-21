@@ -7,9 +7,11 @@ import Stroke from "ol/style/Stroke";
 import Style from "ol/style/Style";
 
 export default class StationMarker extends Feature {
+
     updateStyle(arg0: boolean, arg1: boolean) {
         throw new Error('Method not implemented.');
     }
+
     private lat: number;
     private lon: number;
     private defaultRadius: number;
@@ -18,37 +20,44 @@ export default class StationMarker extends Feature {
     private animationPhase: number = 0;
     private animationSpeed: number = 0.02;
     private href: string;
+    private stationName: string;
 
-    constructor(stationRef: number, lat: number, lon: number, radius: number, markerColor: string, href: string) {
+    constructor(stationRef: number, lat: number, lon: number, radius: number, markerColor: string, href: string, stationName: string) {
         super({ geometry: new Point(fromLonLat([lon, lat])) });
-        
+
         this.stationId = stationRef;
         this.lat = lat;
         this.lon = lon;
         this.defaultRadius = radius;
         this.markerColor = markerColor;
         this.href = href;
-        
+        this.stationName = stationName;
+
         // Set the marker as clickable
         this.setStyle(this.createPulsedStyle(true));
-        
+
         // Start the continuous animation
         this.startPulseAnimation();
         this.setId(stationRef);
+        this.set('htmlId', stationName);
+    }
+
+    private getStationName(): String{
+        return this.stationName;
     }
 
     // Create a style with pulsing animation and pointer cursor
     private createPulsedStyle(clickable: boolean = true): Style {
-        const pulseMultiplier = 1 + Math.sin(this.animationPhase) * 0.20;
+        const pulseMultiplier = 1 + Math.sin(this.animationPhase) * 0.15;
         const dynamicRadius = this.defaultRadius * pulseMultiplier;
         const baseColor = this.hexToRgba(this.markerColor);
-        
+
         return new Style({
             image: new CircleStyle({
                 radius: dynamicRadius,
                 fill: new Fill({ color: baseColor }),
                 stroke: new Stroke({
-                    color: this.hexToRgba("#000000", 0.3),
+                    color: this.hexToRgba("#000000", 0.4),
                     width: 3
                 })
             }),

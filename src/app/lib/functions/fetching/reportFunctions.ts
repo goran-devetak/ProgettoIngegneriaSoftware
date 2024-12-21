@@ -1,5 +1,5 @@
-import { Report } from "../models/report/Report";
-import {URLS} from "../../constants"
+import { Report } from "../../models/report/Report";
+import {URLS} from "../../../constants"
 
 export async function getAllStations(): Promise<Report[] | undefined> {
     try {

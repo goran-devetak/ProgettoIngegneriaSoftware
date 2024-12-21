@@ -1,5 +1,5 @@
-import { Station } from "../models/station/Station";
-import {URLS} from "../../constants"
+import { Station } from "../../models/station/Station";
+import {URLS} from "../../../constants"
 
 export async function getAllStations(): Promise<Station[] | undefined> {
     try {

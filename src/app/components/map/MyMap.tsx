@@ -10,9 +10,10 @@ import OSM from 'ol/source/OSM';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import StationMarker from './StationMarker';
-import { getAllStations } from '../../lib/functions/stationFunctions';
+import { getAllStations } from '../../lib/functions/fetching/stationFunctions';
 import { Station } from '../../lib/models/station/Station';
-import {COLORS} from "../../constants"
+import { COLORS } from "../../constants"
+import { stringify } from 'flatted';
 const data = await getAllStations();
 
 function getColorFromStation(s: Station): string {
@@ -67,7 +68,8 @@ export default function MyMap() {
                         station.address.longitude,
                         10,
                         getColorFromStation(station),
-                        `../stations/${station._id}`
+                        `../stations/${station._id}`,
+                        station.name
                     );
                     markerSource.addFeature(feature);
                 });
@@ -88,7 +90,19 @@ export default function MyMap() {
                 const pixel = map.getEventPixel(event.originalEvent);
                 const hit = map.hasFeatureAtPixel(pixel);
                 const t = map.getTarget();
-                if(t instanceof HTMLElement) t.style.cursor = hit ? 'pointer' : '';
+                if (t instanceof HTMLElement) {
+                    if (hit) {
+                        t.style.cursor = 'pointer';
+                        const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
+                        if(feature){
+                            /* TODO - IMPLEMENT INFO ON HOVERING HERE */
+                            alert(feature.getStationName());
+                        }
+                        
+                    } else {
+                        t.style.cursor = '';
+                    }
+                }
             });
 
             return () => {

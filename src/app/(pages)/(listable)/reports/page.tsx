@@ -7,8 +7,6 @@ export const metadata: Metadata = {
   title: "Lista segnalazioni"
 }
 
-
-
 export default async function ReportDiv() {
   const fetchReports = async () => {
 

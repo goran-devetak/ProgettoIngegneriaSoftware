@@ -1,4 +1,5 @@
 import NavEl from "./NavEl";
+import MyAccount from "./MyAccount";
 import {URLS} from "../../constants"
 
 export default function MyNav() {
@@ -17,6 +18,7 @@ export default function MyNav() {
                         <NavEl pageName="Statistiche" path='/statistics' />
                         <NavEl pageName="Gestione avanzata" path='/advanced' />
                     </ul>
+                    <MyAccount/>
                 </div>
             </nav>
         </section>

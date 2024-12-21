@@ -1,5 +1,5 @@
 import { Station } from "@/app/lib/models/station/Station";
-import {getStationByID} from "@/app/lib/functions/stationFunctions";
+import {getStationByID} from "@/app/lib/functions/fetching/stationFunctions";
 import { Metadata } from "next";
 interface Props {
     params: { stationID: string };

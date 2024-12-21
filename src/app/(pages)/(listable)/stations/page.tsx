@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import StationList from "@/app/components/station/StationList";
-import { getAllStations } from "@/app/lib/functions/stationFunctions";
+import { getAllStations } from "@/app/lib/functions/fetching/stationFunctions";
 import ListDiv from "../layout";
 
 export const metadata: Metadata = {
