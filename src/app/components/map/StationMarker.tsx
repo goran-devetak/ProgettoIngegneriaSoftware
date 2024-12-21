@@ -6,26 +6,42 @@ import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import Style from "ol/style/Style";
 
+interface StationMarkerConfig {
+    stationId: number;
+    lat: number;
+    lon: number;
+    radius: number;
+    markerColor: string;
+    href: string;
+    stationName: string;
+}
+
 export default class StationMarker extends Feature {
+    private readonly lat: number;
+    private readonly lon: number;
+    private readonly defaultRadius: number;
+    private readonly markerColor: string;
+    private readonly stationId: number;
+    private readonly href: string;
+    private readonly stationName: string;
 
-    updateStyle(arg0: boolean, arg1: boolean) {
-        throw new Error('Method not implemented.');
-    }
-
-    private lat: number;
-    private lon: number;
-    private defaultRadius: number;
-    private markerColor: string;
-    private stationId: number;
     private animationPhase: number = 0;
-    private animationSpeed: number = 0.02;
-    private href: string;
-    private stationName: string;
+    private readonly animationSpeed: number = 0.02;
+    private animationFrameId: number | null = null;
+    private isPulsing: boolean = true;
 
-    constructor(stationRef: number, lat: number, lon: number, radius: number, markerColor: string, href: string, stationName: string) {
+    constructor(
+        stationId: number,
+        lat: number,
+        lon: number,
+        radius: number,
+        markerColor: string,
+        href: string,
+        stationName: string,
+    ) {
         super({ geometry: new Point(fromLonLat([lon, lat])) });
 
-        this.stationId = stationRef;
+        this.stationId = stationId;
         this.lat = lat;
         this.lon = lon;
         this.defaultRadius = radius;
@@ -33,22 +49,59 @@ export default class StationMarker extends Feature {
         this.href = href;
         this.stationName = stationName;
 
-        // Set the marker as clickable
-        this.setStyle(this.createPulsedStyle(true));
-
-        // Start the continuous animation
-        this.startPulseAnimation();
-        this.setId(stationRef);
+        this.setId(stationId);
         this.set('htmlId', stationName);
+        this.setStyle(this.createStyle(true));
+        this.startPulseAnimation();
     }
 
-    public getStationName(): String{
+    // Public methods
+    public getStationId(): number {
+        return this.stationId;
+    }
+
+    public getStationName(): string {
         return this.stationName;
     }
 
-    // Create a style with pulsing animation and pointer cursor
-    private createPulsedStyle(clickable: boolean = true): Style {
-        const pulseMultiplier = 1 + Math.sin(this.animationPhase) * 0.15;
+    public getHref(): string {
+        return this.href;
+    }
+
+    public stopPulse(): void {
+        this.isPulsing = false;
+
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
+        }
+
+        this.setStyle(this.createStyle(false));
+    }
+
+    public resumePulse(): void {
+        if (!this.isPulsing) {
+            this.startPulseAnimation();
+        }
+    }
+
+    public selectFeature(): void {
+        this.setStyle(this.createStyle(false));
+        this.stopPulse();
+    }
+
+    public deselectFeature(): void {
+        this.resumePulse();
+    }
+
+    // Private methods
+    private createStyle(pulsing: boolean = true): Style {
+        this.isPulsing = pulsing;
+
+        const pulseMultiplier = this.isPulsing
+            ? 1 + Math.sin(this.animationPhase) * 0.15
+            : 1.5;
+
         const dynamicRadius = this.defaultRadius * pulseMultiplier;
         const baseColor = this.hexToRgba(this.markerColor);
 
@@ -57,12 +110,10 @@ export default class StationMarker extends Feature {
                 radius: dynamicRadius,
                 fill: new Fill({ color: baseColor }),
                 stroke: new Stroke({
-                    color: this.hexToRgba("#000000", 0.4),
-                    width: 3
+                    color: this.hexToRgba("#000000", this.isPulsing ? 0.4 : 1),
+                    width: this.isPulsing ? 3 : 4
                 })
-            }),
-            // Add cursor style
-            zIndex: clickable ? 1 : 0
+            })
         });
     }
 
@@ -73,21 +124,22 @@ export default class StationMarker extends Feature {
         return `rgba(${r}, ${g}, ${b}, ${alpha})`;
     }
 
-    private startPulseAnimation() {
-        const animate = () => {
+    private startPulseAnimation(): void {
+        const animate = (): void => {
+            if (!this.isPulsing) {
+                if (this.animationFrameId) {
+                    cancelAnimationFrame(this.animationFrameId);
+                    this.animationFrameId = null;
+                }
+                return;
+            }
+
             this.animationPhase += this.animationSpeed;
-            const pulsedStyle = this.createPulsedStyle();
-            this.setStyle(pulsedStyle);
-            requestAnimationFrame(animate);
+            this.setStyle(this.createStyle(true));
+            this.animationFrameId = requestAnimationFrame(animate);
         };
+
+        this.isPulsing = true;
         animate();
-    }
-
-    getStationId(): number {
-        return this.stationId;
-    }
-
-    getHref(): string {
-        return this.href;
     }
 }

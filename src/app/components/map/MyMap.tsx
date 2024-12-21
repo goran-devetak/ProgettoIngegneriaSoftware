@@ -1,115 +1,142 @@
 'use client'
-import { useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import 'ol/ol.css';
-import Map from 'ol/Map';
-import View from 'ol/View';
-import { fromLonLat } from 'ol/proj';
-import TileLayer from 'ol/layer/Tile';
-import OSM from 'ol/source/OSM';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import StationMarker from './StationMarker';
-import { getAllStations } from '../../lib/functions/fetching/stationFunctions';
-import { Station } from '../../lib/models/station/Station';
-import { COLORS } from "../../constants"
-import { stringify } from 'flatted';
+
+import { useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
+import Map from 'ol/Map'
+import View from 'ol/View'
+import { fromLonLat } from 'ol/proj'
+import TileLayer from 'ol/layer/Tile'
+import OSM from 'ol/source/OSM'
+import VectorLayer from 'ol/layer/Vector'
+import VectorSource from 'ol/source/Vector'
+import { Station } from '../../lib/models/station/Station'
+import StationMarker from './StationMarker'
+import { getAllStations } from '../../lib/functions/fetching/stationFunctions'
+import { COLORS } from '../../constants'
+import 'ol/ol.css'
+
 const data = await getAllStations();
 
-function getColorFromStation(s: Station): string {
-    if (!s.isActive) {
-        return COLORS.red;
-    } else if (s.reported) {
-        return COLORS.orange;
-    } else return COLORS.green;
+// Constants
+const TRENTO_COORDS = {
+    SW: [11.01, 45.98],
+    NE: [11.24, 46.17]
 }
 
-export default function MyMap() {
-    const mapRef = useRef(null);
-    const router = useRouter();
+const TRENTO_CENTER = [11.1217, 46.0667]
 
-    const trentoCoords = {
-        'SO': [11.01, 45.98],
-        'NE': [11.24, 46.17]
-    }
+const MAP_CONFIG = {
+    minZoom: 10,
+    maxZoom: 18,
+    initialZoom: 14
+} as const
+
+// Helper functions
+const getStationColor = (station: Station): string => {
+    if (!station.isActive) return COLORS.red
+    return station.reported ? COLORS.orange : COLORS.green
+}
+
+const createStationMarker = (station: Station): StationMarker => {
+    return new StationMarker(
+        station.id,
+        station.address.latitude,
+        station.address.longitude,
+        10,
+        getStationColor(station),
+        `../stations/${station._id}`,
+        station.name
+    )
+}
+
+export default function StationMap() {
+    const mapRef = useRef<HTMLDivElement>(null)
+    const router = useRouter()
+    const mapInstance = useRef<Map | null>(null)
 
     useEffect(() => {
+        if (!mapRef.current) return
+
         const trentoExtent = [
-            ...fromLonLat(trentoCoords['SO']),
-            ...fromLonLat(trentoCoords['NE'])
-        ];
+            ...fromLonLat(TRENTO_COORDS.SW),
+            ...fromLonLat(TRENTO_COORDS.NE)
+        ]
 
-        if (mapRef.current) {
-            const map = new Map({
-                target: mapRef.current,
-                layers: [
-                    new TileLayer({
-                        source: new OSM()
-                    })
-                ],
-                view: new View({
-                    center: fromLonLat([11.1217, 46.0667]),
-                    zoom: 14,
-                    maxZoom: 18,
-                    minZoom: 10,
-                    extent: trentoExtent,
-                })
-            });
+        // Initialize map
+        const markerSource = new VectorSource()
+        const markerLayer = new VectorLayer({ source: markerSource })
 
-            // Source and layer for the markers
-            const markerSource = new VectorSource();
-            const markerLayer = new VectorLayer({ source: markerSource });
+        mapInstance.current = new Map({
+            target: mapRef.current,
+            layers: [
+                new TileLayer({ source: new OSM() }),
+                markerLayer
+            ],
+            view: new View({
+                center: fromLonLat(TRENTO_CENTER),
+                zoom: MAP_CONFIG.initialZoom,
+                maxZoom: MAP_CONFIG.maxZoom,
+                minZoom: MAP_CONFIG.minZoom,
+                extent: trentoExtent,
+            })
+        })
 
-            if (data) {
-                data.forEach(station => {
-                    const feature = new StationMarker(
-                        station.id,
-                        station.address.latitude,
-                        station.address.longitude,
-                        10,
-                        getColorFromStation(station),
-                        `../stations/${station._id}`,
-                        station.name
-                    );
-                    markerSource.addFeature(feature);
-                });
-            }
-
-            map.addLayer(markerLayer);
-
-            // Add click handler
-            map.on('click', (event) => {
-                const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
-                if (feature && feature instanceof StationMarker) {
-                    router.push(feature.getHref());
-                }
-            });
-
-            // Change cursor style when hovering markers
-            map.on('pointermove', (event) => {
-                const pixel = map.getEventPixel(event.originalEvent);
-                const hit = map.hasFeatureAtPixel(pixel);
-                const t = map.getTarget();
-                if (t instanceof HTMLElement) {
-                    if (hit) {
-                        t.style.cursor = 'pointer';
-                        const feature: StationMarker = map.forEachFeatureAtPixel(event.pixel, (feature) => feature) as StationMarker;
-
-                        /* TODO - IMPLEMENT INFO ON HOVERING HERE */
-                        alert(feature.getStationName());
-
-
-                    } else {
-                        t.style.cursor = '';
-                    }
-                }
-            });
-
-            return () => {
-                map.setTarget();
-            };
+        // Add markers for each station
+        if (data) {
+            data.forEach(station => {
+                markerSource.addFeature(createStationMarker(station))
+            })
         }
-    }, [router]);
 
-    return <div ref={mapRef} className="w-full h-full" />;
+        // Handle marker clicks
+        mapInstance.current.on('click', (event) => {
+            const feature = mapInstance.current?.forEachFeatureAtPixel(
+                event.pixel,
+                feature => feature
+            )
+            if (feature instanceof StationMarker) {
+                router.push(feature.getHref())
+            }
+        })
+
+        // Handle marker hover effects
+        mapInstance.current.on('pointermove', (event) => {
+            if (!mapInstance.current) return
+
+            const pixel = mapInstance.current.getEventPixel(event.originalEvent)
+            const hit = mapInstance.current.hasFeatureAtPixel(pixel)
+            const target = mapInstance.current.getTarget()
+
+            if (!(target instanceof HTMLElement)) return
+
+            if (hit) {
+                const feature = mapInstance.current.forEachFeatureAtPixel(
+                    event.pixel,
+                    feature => feature
+                ) as StationMarker
+
+                target.style.cursor = 'pointer'
+                markerSource.forEachFeature(f => {
+                    if (f instanceof StationMarker) f.deselectFeature()
+                })
+                feature.selectFeature()
+                console.log(feature.getStationName()) // TODO: Implement hover box with info
+            } else {
+                target.style.cursor = ''
+                markerSource.forEachFeature(f => {
+                    if (f instanceof StationMarker) f.deselectFeature()
+                })
+            }
+        })
+
+        // Cleanup
+        return () => {
+            if (mapInstance.current) {
+                mapInstance.current.setTarget(undefined)
+                mapInstance.current = null
+            }
+        }
+    }, [router])
+
+    return <div ref={mapRef} className="h-full w-full" />
 }

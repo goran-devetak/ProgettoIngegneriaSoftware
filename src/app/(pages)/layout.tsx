@@ -18,9 +18,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" >
-      <body className="vsc-initialized max-h-100">
+      <body className="vsc-initialized h-full flex flex-col">
         <MyNav />
-        {children}
+        <div className="flex-1 max-h-screen">
+          {children}
+        </div>
       </body>
     </html>
   )
