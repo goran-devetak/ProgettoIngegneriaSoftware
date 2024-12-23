@@ -1,5 +1,5 @@
 "use client"
-import { login } from "@/app/lib/functions/auth/action"
+import { login, logout } from "@/app/lib/functions/auth/action"
 import SubmitButton from "./SubmitButton"
 import { useActionState } from "react"
 
@@ -34,6 +34,7 @@ export default function Login() {
                     <a className="text-blue-400 hover:text-blue-500" href="#">Sign Up</a>
                 </div>
             </form>
+            <form action={logout}><button type="submit" className="btn rounded-md p-3 bg-red-400">Logout</button></form>
         </div>
     )
 }

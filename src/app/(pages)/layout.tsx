@@ -1,5 +1,5 @@
 import MyNav from "../components/nav/MyNav";
-import '../globals.css';
+import '../../app/globals.css';
 import { Metadata } from "next";
 
 

@@ -6,7 +6,7 @@ import { createSession, deleteSession } from "./session"
 const testUser = {
     id: "1",
     email: "aa@comune.trento.it",
-    password: "12345"
+    password: "12345678"
 }
 
 export async function login(prevState: any, formData: FormData) {
@@ -14,9 +14,7 @@ export async function login(prevState: any, formData: FormData) {
         const rawFormData = Object.fromEntries(formData.entries())
         const result = LoginSchemaZod.safeParse(rawFormData)
 
-
         if (!result.success) {
-            
             return {
                 errors: result.error.flatten().fieldErrors,
             }
@@ -31,9 +29,10 @@ export async function login(prevState: any, formData: FormData) {
                 }
             }
         }
-        await createSession(testUser.id)
-        redirect("/home")
+        await createSession(testUser.id);
+        //redirect("/home")
     } catch (error) {
+        console.log(error)
         return {
             errors: {
                 email: ["Si è verificato un errore durante il login"]
@@ -44,5 +43,5 @@ export async function login(prevState: any, formData: FormData) {
 
 export async function logout() {
     await deleteSession()
-    redirect("/")
+    //redirect("/")
 }
