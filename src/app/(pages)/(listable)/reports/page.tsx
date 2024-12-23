@@ -4,7 +4,7 @@ import ListDiv from "../layout";
 import { URLS } from "../../../constants"
 
 export const metadata: Metadata = {
-  title: "Lista segnalazioni"
+  title: "SEGNALAZIONI"
 }
 
 export default async function ReportDiv() {

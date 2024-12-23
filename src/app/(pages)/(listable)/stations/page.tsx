@@ -4,7 +4,7 @@ import { getAllStations } from "@/app/lib/functions/fetching/stationFunctions";
 import ListDiv from "../layout";
 
 export const metadata: Metadata = {
-    title: "Lista Parcheggi",
+    title: "PARCHEGGI",
 };
 
 // Main Component

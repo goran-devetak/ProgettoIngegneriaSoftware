@@ -1,3 +1,7 @@
+import Login from "@/app/components/auth/Login"
+
 export default function Landing() {
-    return <h1>(LOGIN STUFF)</h1>;
+    return <>
+        <Login />
+    </>
 }
