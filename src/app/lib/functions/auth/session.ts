@@ -2,8 +2,7 @@ import "server-only"
 import { SignJWT, jwtVerify } from "jose"
 import { cookies } from "next/headers"
 
-//const secretKey = process.env.SESSION_SECRET
-const secretKey = "PORCACCIODIDDIOPORCACCIODIDDIOPO"
+const secretKey = process.env.SESSION_SECRET
 const encodedKey = new TextEncoder().encode(secretKey)
 
 const duration = 7 * 24 * 60 * 60 * 1000

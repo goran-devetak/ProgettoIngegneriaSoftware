@@ -5,7 +5,6 @@ const COLORS = {
     red:'#dc2626',
     green:'#16a34a',
   };
-  
 
   const URLS = {
     homepage: "http://localhost:3000",
