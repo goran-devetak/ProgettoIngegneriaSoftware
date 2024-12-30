@@ -10,38 +10,32 @@ const testUser = {
 }
 
 export async function login(prevState: any, formData: FormData) {
-    try {
-        const rawFormData = Object.fromEntries(formData.entries())
-        const result = LoginSchemaZod.safeParse(rawFormData)
+    const rawFormData = Object.fromEntries(formData.entries())
+    const result = LoginSchemaZod.safeParse(rawFormData)
 
-        if (!result.success) {
-            return {
-                errors: result.error.flatten().fieldErrors,
-            }
-        }
+    if (!result.success) {
+        redirect("/")
+        // return {
+        //     errors: result.error.flatten().fieldErrors,
+        // }
+    }
 
-        const { email, password } = result.data
+    const { email, password } = result.data
 
-        if (email !== testUser.email || password !== testUser.password) {
-            return {
-                errors: {
-                    email: ["Credenziali errate"]
-                }
-            }
-        }
-        await createSession(testUser.id);
-        //redirect("/home")
-    } catch (error) {
-        console.log(error)
+    if (email !== testUser.email || password !== testUser.password) {
+        redirect("/")
         return {
             errors: {
-                email: ["Si è verificato un errore durante il login"]
+                email: ["Credenziali errate"]
             }
         }
     }
+    await createSession(testUser.id);
+    redirect("/home")
+
 }
 
 export async function logout() {
     await deleteSession()
-    //redirect("/")
+    redirect("/")
 }

@@ -17,7 +17,6 @@ export default function Login() {
                         type="text"
                     />
                 </div>
-                {state?.errors?.email && <p className="text-red-500">{state.errors.email}</p>}
                 <div>
                     <label className="font-semibold text-xs mt-3">Password</label>
                     <input
@@ -26,15 +25,12 @@ export default function Login() {
                         type="password"
                     />
                 </div>
-                {state?.errors?.password && <p className="text-red-500">{state.errors.password}</p>}
+                {state?.errors?.email && <p className="text-red-500">{state.errors.email}</p>}
                 <SubmitButton />
                 <div className="flex mt-6 justify-center text-xs">
-                    <a className="text-blue-400 hover:text-blue-500" href="#">Forgot Password</a>
-                    <span className="mx-2 text-gray-300">/</span>
                     <a className="text-blue-400 hover:text-blue-500" href="#">Sign Up</a>
                 </div>
             </form>
-            <form action={logout}><button type="submit" className="btn rounded-md p-3 bg-red-400">Logout</button></form>
         </div>
     )
 }

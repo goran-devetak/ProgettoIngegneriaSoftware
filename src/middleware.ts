@@ -8,7 +8,6 @@ const loginRoute = "/"
 export default async function middleware(req: NextRequest) {
 
     try {
-        console.log('Middleware running for path:', req.nextUrl.pathname);
         const path = req.nextUrl.pathname
         const isPublic = publicRoutes.includes(path)
         const isLogin = path==loginRoute
