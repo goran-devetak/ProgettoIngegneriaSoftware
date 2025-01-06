@@ -1,20 +1,12 @@
 import { Feature } from "ol";
-import { Point } from "ol/geom";
+import { Point, Polygon } from "ol/geom";
 import { fromLonLat } from "ol/proj";
 import CircleStyle from "ol/style/Circle";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
+import Text from "ol/style/Text";
 import Style from "ol/style/Style";
-
-interface StationMarkerConfig {
-    stationId: number;
-    lat: number;
-    lon: number;
-    radius: number;
-    markerColor: string;
-    href: string;
-    stationName: string;
-}
+import InfoRectangle from "./InfoRectangle";
 
 export default class StationMarker extends Feature {
     private readonly lat: number;
@@ -24,6 +16,7 @@ export default class StationMarker extends Feature {
     private readonly stationId: number;
     private readonly href: string;
     private readonly stationName: string;
+    private infoRect: InfoRectangle
 
     private animationPhase: number = 0;
     private readonly animationSpeed: number = 0.02;
@@ -49,33 +42,22 @@ export default class StationMarker extends Feature {
         this.href = href;
         this.stationName = stationName;
 
+        this.infoRect = new InfoRectangle(stationName, href, lon, lat)
+        this.infoRect.setAssociatedMarker(this);
+
         this.setId(stationId);
         this.set('htmlId', stationName);
         this.setStyle(this.createStyle(true));
         this.startPulseAnimation();
-    }
-
-    // Public methods
-    public getStationId(): number {
-        return this.stationId;
-    }
-
-    public getStationName(): string {
-        return this.stationName;
-    }
-
-    public getHref(): string {
-        return this.href;
+        this.infoRect.hide()
     }
 
     public stopPulse(): void {
         this.isPulsing = false;
-
         if (this.animationFrameId) {
             cancelAnimationFrame(this.animationFrameId);
             this.animationFrameId = null;
         }
-
         this.setStyle(this.createStyle(false));
     }
 
@@ -88,10 +70,12 @@ export default class StationMarker extends Feature {
     public selectFeature(): void {
         this.setStyle(this.createStyle(false));
         this.stopPulse();
+        this.infoRect.show()
     }
 
     public deselectFeature(): void {
         this.resumePulse();
+        this.infoRect.hide()
     }
 
     // Private methods
@@ -141,5 +125,19 @@ export default class StationMarker extends Feature {
 
         this.isPulsing = true;
         animate();
+    }
+    public getInfoRectangle(): Feature {
+        return this.infoRect
+    }
+    public getStationId(): number {
+        return this.stationId;
+    }
+
+    public getStationName(): string {
+        return this.stationName;
+    }
+
+    public getHref(): string {
+        return this.href;
     }
 }

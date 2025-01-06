@@ -14,6 +14,7 @@ import StationMarker from './StationMarker'
 import { getAllStations } from '../../lib/functions/fetching/stationFunctions'
 import { COLORS } from '../../constants'
 import 'ol/ol.css'
+import InfoRectangle from './InfoRectangle'
 
 const data = await getAllStations();
 
@@ -84,7 +85,9 @@ export default function StationMap() {
         // Add markers for each station
         if (data) {
             data.forEach(station => {
-                markerSource.addFeature(createStationMarker(station))
+                const marker = createStationMarker(station)
+                markerSource.addFeature(marker)
+                markerSource.addFeature(marker.getInfoRectangle())
             })
         }
 
@@ -94,7 +97,7 @@ export default function StationMap() {
                 event.pixel,
                 feature => feature
             )
-            if (feature instanceof StationMarker) {
+            if (feature instanceof StationMarker || feature instanceof InfoRectangle) {
                 router.push(feature.getHref())
             }
         })
@@ -102,33 +105,44 @@ export default function StationMap() {
         // Handle marker hover effects
         mapInstance.current.on('pointermove', (event) => {
             if (!mapInstance.current) return
-
             const pixel = mapInstance.current.getEventPixel(event.originalEvent)
             const hit = mapInstance.current.hasFeatureAtPixel(pixel)
             const target = mapInstance.current.getTarget()
-
             if (!(target instanceof HTMLElement)) return
 
             if (hit) {
                 const feature = mapInstance.current.forEachFeatureAtPixel(
                     event.pixel,
                     feature => feature
-                ) as StationMarker
-
+                )
                 target.style.cursor = 'pointer'
-                markerSource.forEachFeature(f => {
-                    if (f instanceof StationMarker) f.deselectFeature()
-                })
-                feature.selectFeature()
-                console.log(feature.getStationName()) // TODO: Implement hover box with info
+
+                // Check if we're hovering over either a StationMarker or its InfoRectangle
+                if (feature instanceof StationMarker ||
+                    (feature instanceof InfoRectangle && feature.getAssociatedMarker())) {
+
+                    // Deselect all other markers
+                    markerSource.forEachFeature(f => {
+                        if (f instanceof StationMarker &&
+                            f !== (feature instanceof StationMarker ?
+                                feature :
+                                feature.getAssociatedMarker())) {
+                            f.deselectFeature()
+                        }
+                    })
+
+                    // Select the appropriate marker
+                    const markerToSelect = feature instanceof StationMarker ?
+                        feature :
+                        feature.getAssociatedMarker()
+                    if (markerToSelect) markerToSelect.selectFeature()
+                }
             } else {
-                target.style.cursor = ''
                 markerSource.forEachFeature(f => {
                     if (f instanceof StationMarker) f.deselectFeature()
                 })
             }
         })
-
         // Cleanup
         return () => {
             if (mapInstance.current) {
