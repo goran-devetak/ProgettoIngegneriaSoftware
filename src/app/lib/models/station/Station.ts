@@ -8,6 +8,7 @@ export interface Station extends Document{
     address: Address;
     numSlots: number;
     isActive: boolean;
+    isEliminated: boolean;
     reported: boolean;
     slotList: Slot[];
   }
@@ -17,6 +18,7 @@ export interface Station extends Document{
     address: { type: AddressSchema, required: true },
     numSlots: { type: Number, required: true },
     isActive: { type: Boolean, required: true},
+    isEliminated: { type: Boolean, required: true},
     reported: {type: Boolean, required: true},
     slotList: { type: [SlotSchema], default: [] },
   });
