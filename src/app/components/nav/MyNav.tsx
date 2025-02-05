@@ -5,7 +5,7 @@ import { URLS } from "../../constants"
 export default function MyNav() {
 
     return (<>
-        <section className="relative mx-auto">
+        <section className="relative mx-auto z-10">
             <nav className="flex justify-between bg-mycyan text-white w-screen">
                 <div className="px-5 xl:px-12 py-3 flex w-full items-center">
                     <a className="text-3xl font-bold font-heading" href="/home">

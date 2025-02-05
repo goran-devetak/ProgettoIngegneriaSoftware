@@ -6,10 +6,10 @@ import Style from "ol/style/Style";
 import StationMarker from "./StationMarker";
 
 export default class InfoRectangle extends Feature {
-    private readonly defWidth = 400
-    private readonly defHeight = 70
+    private readonly defWidth = 300
+    private readonly defHeight = 40
     private readonly offset = 0
-    private readonly cornerRadius = 15
+    private readonly cornerRadius = 20
     private associatedMarker: StationMarker | null = null;
     private href: string
 
@@ -52,7 +52,7 @@ export default class InfoRectangle extends Feature {
 
             // Add text
             ctx.fillStyle = '#000000';
-            ctx.font = 'bold 20px Arial';
+            ctx.font = 'bold 16px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 

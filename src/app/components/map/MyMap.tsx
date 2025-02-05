@@ -141,6 +141,7 @@ export default function StationMap() {
                 markerSource.forEachFeature(f => {
                     if (f instanceof StationMarker) f.deselectFeature()
                 })
+            target.style.cursor=''
             }
         })
         // Cleanup
@@ -152,5 +153,5 @@ export default function StationMap() {
         }
     }, [router])
 
-    return <div ref={mapRef} className="h-full w-full" />
+    return <div ref={mapRef} className="h-full w-full z-0" />
 }
