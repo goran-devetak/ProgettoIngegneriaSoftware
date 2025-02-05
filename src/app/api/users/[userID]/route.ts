@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/app/lib/dbConnect';
-import UserModel from '@/app/lib/models/user/User.model';
+import UserModel from '@/app/lib/models/auth/user/User.model';
 
 
-/*export async function GET(req: Request, { params }: { params: { userID: string } }) {
+
+
+export async function GET(req: Request, { params }: { params: { userID: string } }) {
     try {
         await dbConnect();
 
@@ -19,15 +21,8 @@ import UserModel from '@/app/lib/models/user/User.model';
     } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
-}*/
-
-export async function GET(req: Request, { params }: { params: { userID: string } }) {
-    return NextResponse.json({
-        id: "1",
-        email: "aa@comune.trento.it",
-        password: "12345678"
-    });
 }
+
 
 export async function POST(req: Request) {
     try {

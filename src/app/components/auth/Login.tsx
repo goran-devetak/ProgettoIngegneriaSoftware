@@ -13,7 +13,7 @@ export default function Login() {
                     <label className="font-semibold text-sm">Email</label>
                     <input
                         name="email"
-                        className="h-10 px-4 bg-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="h-10 px-4 bg-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                         type="email"
                     />
                 </div>
@@ -21,7 +21,7 @@ export default function Login() {
                     <label className="font-semibold text-sm">Password</label>
                     <input
                         name="password"
-                        className="h-10 px-4 bg-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="h-10 px-4 bg-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                         type="password"
                     />
                 </div>
@@ -30,7 +30,7 @@ export default function Login() {
                 )}
                 <SubmitButton />
                 <div className="mt-4 text-center text-sm">
-                    <a className="text-blue-500 hover:underline" href="/signup">Registrati</a>
+                    <a className="text-red-500 hover:underline" href="/signup">Registrati</a>
                 </div>
             </form>
         </div>

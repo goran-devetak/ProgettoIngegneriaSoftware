@@ -25,7 +25,8 @@ export default async function middleware(req: NextRequest) {
             const cookie = (await cookies()).get('session')?.value
             const session = await decrypt(cookie)
 
-            if (!session?.userID) {
+            const userID = session?.userID;
+            if (!userID) {
                 return NextResponse.redirect(new URL("/", req.nextUrl));
             }
         }

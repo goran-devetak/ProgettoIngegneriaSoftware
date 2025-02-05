@@ -2,34 +2,14 @@
 import { redirect } from "next/navigation"
 import { LoginSchemaZod } from "../../models/auth/Login"
 import { createSession, deleteSession } from "./session"
-import { User } from "../../models/user/User"
+import { User } from "../../models/auth/user/User"
 import { URLS } from "@/app/constants"
+import { getUserByEmail, getUserIdByEmail } from "./userFunctions"
+import bcrypt from "bcrypt"
 
-const testUser = {
-    id: "1",
-    email: "aa@comune.trento.it",
-    password: "12345678"
+export async function verifyPassword(plainPassword: string, hashedPassword: string) {
+    return await bcrypt.compare(plainPassword, hashedPassword);
 }
-export async function getUserByID(id: string): Promise<User | undefined> {
-    try {
-        const res = await fetch(URLS.apis + `/users/${id}`, {
-            method: "GET",
-            cache: "no-store",
-        });
-
-        if (!res.ok) {
-            console.error(`Failed to fetch User with id ${id}:`, res.statusText);
-            return undefined;
-        }
-
-        const data = await res.json();
-        return data.success ? data.data : undefined;
-    } catch (error) {
-        console.error(`Error fetching User with id ${id}:`, error);
-        return undefined;
-    }
-};
-
 
 export async function login(prevState: any, formData: FormData) {
     const rawFormData = Object.fromEntries(formData.entries())
@@ -46,7 +26,13 @@ export async function login(prevState: any, formData: FormData) {
 
     const { email, password } = result.data
 
-    if (email !== testUser.email || password !== testUser.password) {
+    const registeredUser = await getUserByEmail(email) as unknown as User
+    console.log(registeredUser)
+
+    const isCorrect = await verifyPassword(password, registeredUser.password)
+    console.log(isCorrect)
+
+    if (!isCorrect) {
         redirect("/")
         return {
             errors: {
@@ -54,9 +40,11 @@ export async function login(prevState: any, formData: FormData) {
             }
         }
     }
-    await createSession(testUser.id);
-    redirect("/home")
-
+    const userID = await getUserIdByEmail(email)
+    if (userID) {
+        await createSession(userID);
+        redirect("/home")
+    }
 }
 
 export async function logout() {

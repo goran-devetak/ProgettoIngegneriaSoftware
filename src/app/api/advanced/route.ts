@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/app/lib/dbConnect';
 import StationModel from '@/app/lib/models/station/Station.model';
-import { Station } from '@/app/lib/models/station/Station';
 
 
 export async function POST(req: Request) {
@@ -20,11 +19,11 @@ export async function POST(req: Request) {
       */
 
     const newStation = new StationModel({
-      name,
-      address,
+      name:name,
+      address:address,
       numSlots: numSlots,
-      state,
-      reported,
+      state:state,
+      reported:reported,
       slotList: [],
       reportList: [], 
     });
