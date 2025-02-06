@@ -5,6 +5,7 @@ import { createSession, deleteSession } from "./session"
 import { User } from "../../models/auth/user/User"
 import { getUserByEmail, getUserIdByEmail } from "./userFunctions"
 import bcrypt from "bcrypt"
+import dbConnect from "../../dbConnect"
 
 interface LoginData extends FormData {
     email: string,
@@ -16,6 +17,8 @@ export async function verifyPassword(plainPassword: string, hashedPassword: stri
 }
 
 export async function login(prevState: any, formData: LoginData) {
+
+    await dbConnect()
 
     const formDataObj = Object.fromEntries(formData.entries());
     if (formDataObj.email == '' || formDataObj.password == '') return { errors: { email: ["Tutti i campi sono obbligatori  "] } }
@@ -47,6 +50,7 @@ export async function login(prevState: any, formData: LoginData) {
     const userID = await getUserIdByEmail(email)
     if (userID) {
         await createSession(userID);
+        redirect("/home")
     }
 }
 

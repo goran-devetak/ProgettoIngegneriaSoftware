@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import Window from "../general/window";
 
 async function signUp(prevState: any, formData: FormData) {
     const data = {
@@ -39,8 +40,12 @@ export default function SignUp() {
     const [state, signUpAction] = useActionState(signUp, undefined);
 
     return (
-        <div className="flex flex-col justify-center h-screen items-center">
+        <div className="flex justify-center h-screen items-center">
             <form action={signUpAction} className="flex flex-col bg-white rounded-lg shadow-lg p-8 w-96">
+                <div className="pb-2">
+                    <h1 className="text-4xl text-center text-gray-800 font-bold" >Registrazione</h1>
+                </div>
+                <hr className="py-2"/>
                 <div className="flex flex-col gap-2 mt-4">
                     <label className="font-semibold text-sm">Nome</label>
                     <input
