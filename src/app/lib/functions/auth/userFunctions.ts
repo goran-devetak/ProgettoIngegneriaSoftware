@@ -32,8 +32,9 @@ export async function getUserByID(id: string): Promise<User | undefined> {
             return undefined;
         }
 
+
         const data = await res.json();
-        return data.success ? data.data : undefined;
+        return data ? data : undefined;
     } catch (error) {
         console.error(`Error fetching User with id ${id}:`, error);
         return undefined;

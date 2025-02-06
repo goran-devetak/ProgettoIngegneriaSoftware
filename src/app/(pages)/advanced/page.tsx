@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 
 export default function Advanced() {
     return (
-        <div className="flex items-center justify-center py-5">
+        <div className="flex items-center h-screen justify-center py-5">
             <div className="relative px-4 py-10 bg-white mx-8 md:mx-0 shadow rounded-3xl sm:p-10 ">
                 <div className="max-w-md mx-auto">
                     <div className="flex items-center space-x-5">

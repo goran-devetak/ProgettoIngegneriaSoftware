@@ -41,7 +41,7 @@ export default function SignUp() {
     return (
         <div className="flex flex-col justify-center h-screen items-center">
             <form action={signUpAction} className="flex flex-col bg-white rounded-lg shadow-lg p-8 w-96">
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 mt-4">
                     <label className="font-semibold text-sm">Nome</label>
                     <input
                         name="name"
