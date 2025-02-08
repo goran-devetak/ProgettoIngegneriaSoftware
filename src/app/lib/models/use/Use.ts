@@ -5,6 +5,7 @@ export interface Use extends Document{
   timestamp: number;
   isBlocked: boolean;
   service: string;
+  stationID: number;
 }
 
 export const UseSchema = new Schema<Use>({
@@ -12,4 +13,5 @@ export const UseSchema = new Schema<Use>({
   timestamp: { type: Number, required: true },
   isBlocked: { type: Boolean, required: true },
   service: { type: String, required: true },
+  stationID: {type: Number, required: true}
 });
