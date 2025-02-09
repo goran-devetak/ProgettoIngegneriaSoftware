@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 
 export default async function ReportDiv() {
   const fetchReports = async () => {
-
     const res = await fetch(URLS.apis + "/reports");
     const reports = await res.json();
     return reports;

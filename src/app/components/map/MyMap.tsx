@@ -85,9 +85,11 @@ export default function StationMap() {
         // Add markers for each station
         if (data) {
             data.forEach(station => {
-                const marker = createStationMarker(station)
-                markerSource.addFeature(marker)
-                markerSource.addFeature(marker.getInfoRectangle())
+                if(!station.isEliminated){
+                    const marker = createStationMarker(station)
+                    markerSource.addFeature(marker)
+                    markerSource.addFeature(marker.getInfoRectangle())
+                }
             })
         }
 

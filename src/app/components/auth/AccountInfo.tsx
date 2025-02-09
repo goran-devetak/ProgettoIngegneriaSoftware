@@ -15,6 +15,10 @@ export default async function AccountInfo() {
 
         <div className="flex flex-col justify-center h-screen items-center">
             <div className="flex flex-col bg-white items-center rounded-lg shadow-lg p-8 w-96">
+                <div className="pb-2">
+                    <h1 className="text-4xl text-center text-gray-800 font-bold " >Il tuo account</h1>
+                </div>
+                <hr className="py-2"/>
                 <div className="flex gap-2 my-2">
                     <label className="font-bold text-base">Nome:</label>
                     <h2>{user?.name}</h2>

@@ -12,11 +12,12 @@ export default function MyNav() {
                         <img className="h-9" src={URLS.homepage + "/logo.png"} alt="P&C" />
                     </a>
                     <ul className="hidden md:flex px-4 mx-auto font-semibold font-heading space-x-5">
-                        <NavEl pageName="Home" path='/home' />
-                        <NavEl pageName="Parcheggi" path='/stations' />
-                        <NavEl pageName="Segnalazioni" path='/reports' />
-                        <NavEl pageName="Statistiche" path='/statistics' />
-                        <NavEl pageName="Gestione avanzata" path='/advanced' />
+                        <NavEl pageName="Home" path='/home' external={false} />
+                        <NavEl pageName="Parcheggi" path='/stations' external={false}/>
+                        <NavEl pageName="Segnalazioni" path='/reports'external={false} />
+                        <NavEl pageName="Statistiche" path='/statistics' external={false}/>
+                        <NavEl pageName="Gestione avanzata" path='/advanced' external={false}/>
+                        <NavEl pageName="TESTING" path='/external/reserveslot' external={true}/>
                     </ul>
                     <MyAccount />
                 </div>

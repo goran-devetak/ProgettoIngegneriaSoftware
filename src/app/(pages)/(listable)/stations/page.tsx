@@ -6,10 +6,10 @@ import ListDiv from "../layout";
 export const metadata: Metadata = {
     title: "PARCHEGGI",
 };
+const stations = await getAllStations();
 
 // Main Component
 export default async function StationDiv() {
-    const stations = await getAllStations();
 
     if (!stations || stations.length === 0) {
         return (

@@ -3,6 +3,7 @@ import dbConnect from '@/app/lib/dbConnect';
 import StationModel from '@/app/lib/models/station/Station.model';
 import mongoose, { mongo } from 'mongoose';
 import UseModel from '@/app/lib/models/use/Use.model';
+import SlotModel from '@/app/lib/models/slot/Slot.model';
 
 export async function GET(req: Request, { params }: { params: { stationID: string, slotID: string } }) {
   await dbConnect();
@@ -19,7 +20,7 @@ export async function GET(req: Request, { params }: { params: { stationID: strin
       );
     }
 
-    const slot = station.slotList.find((slot) => (slot._id as mongoose.Types.ObjectId).toString() === slotID);
+    const slot = await SlotModel.findById(slotID)
 
     if (!slot) {
       return NextResponse.json(

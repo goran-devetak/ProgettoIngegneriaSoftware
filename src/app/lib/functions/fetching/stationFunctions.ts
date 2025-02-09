@@ -1,9 +1,10 @@
 import { Station } from "../../models/station/Station";
-import {URLS} from "../../../constants"
+import { URLS } from "../../../constants"
+import { Slot } from "../../models/slot/Slot";
 
 export async function getAllStations(): Promise<Station[] | undefined> {
     try {
-        const res = await fetch(URLS.apis+"/stations", {
+        const res = await fetch(URLS.apis + "/stations", {
             method: "GET",
             cache: "no-store",
         });
@@ -18,10 +19,28 @@ export async function getAllStations(): Promise<Station[] | undefined> {
     }
 };
 
+export async function getSlotByID(stationID: string, slotID: string): Promise<Slot | undefined> {
+    try {
+        const res = await fetch(URLS.apis + `/stations/${stationID}/${slotID}`, {
+            method: "GET",
+        });
+
+        if (!res.ok) {
+            console.error(`Failed to fetch slot with id ${slotID}:`, res.statusText);
+            return undefined;
+        }
+
+        const data = await res.json();
+        return data.success ? data.data : undefined;
+    } catch (error) {
+        console.error(`Error fetching slot with id ${slotID}:`, error);
+        return undefined;
+    }
+}
 
 export async function getStationByID(id: string): Promise<Station | undefined> {
     try {
-        const res = await fetch(URLS.apis+`/stations/${id}`, {
+        const res = await fetch(URLS.apis + `/stations/${id}`, {
             method: "GET",
             cache: "no-store",
         });

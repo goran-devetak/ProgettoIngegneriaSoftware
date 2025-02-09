@@ -10,7 +10,7 @@ export default function Login() {
         <div className="flex justify-center items-center h-screen ">
             <form className="flex flex-col bg-white rounded-lg shadow-lg p-8 w-96" action={loginAction}>
                 <div className="pb-2">
-                    <h1 className="text-4xl text-center text-gray-800 font-bold " >Accesso</h1>
+                    <h1 className="text-4xl text-center text-gray-800 font-bold">Accesso</h1>
                 </div>
                 <hr className="py-2"/>
                 <div className="flex flex-col gap-2">

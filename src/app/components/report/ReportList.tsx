@@ -7,12 +7,14 @@ interface ReportListProps {
 }
 
 
-const ReportList: React.FC<ReportListProps> = ({reports}) => {
+const ReportList: React.FC<ReportListProps> = ({ reports }) => {
     return (
         <div className="flex flex-col gap-4 items-center justify-center w-screen h-full max-w-9xl">
-            {reports.map((report) => {
-                return <ReportCardComponent key={(report._id as mongoose.Types.ObjectId).toString()} report={report} />;
-            })}
+            {
+                reports.length > 0 ? reports.map((report) => {
+                    return <ReportCardComponent key={(report._id as mongoose.Types.ObjectId).toString()} report={report} />;
+                }) : <div className="text-xl">Nessana segnalazione disponibile</div>
+            }
         </div>
     );
 }

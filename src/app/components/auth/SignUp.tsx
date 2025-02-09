@@ -1,7 +1,6 @@
 "use client";
 
 import { useActionState } from "react";
-import Window from "../general/window";
 
 async function signUp(prevState: any, formData: FormData) {
     const data = {

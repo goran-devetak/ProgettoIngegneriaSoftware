@@ -9,12 +9,16 @@ interface StationListProps {
 
 const StationList: React.FC<StationListProps> = ({ stations }) => {
 
-    let counter = 0;
     return (
         <div className="flex flex-col gap-4 items-center justify-center w-screen h-full max-w-9xl">
-            {stations.map((station) => {
-                return <StationCardComponent key={(station._id as mongoose.Types.ObjectId).toString()} station={station} />;
-            })}
+            {
+                stations.length > 0 ? stations.map((station) => {
+                    if (!station.isEliminated) {
+                        return <StationCardComponent key={(station._id as mongoose.Types.ObjectId).toString()} station={station} />;
+                    }
+                }) : <div className="text-xl">Nessana segnalazione disponibile</div>
+
+            }
         </div>
     );
 }
