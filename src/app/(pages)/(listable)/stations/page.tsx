@@ -9,7 +9,10 @@ export const metadata: Metadata = {
 // Main Component
 export default async function StationDiv() {
     return (
-        <ListDiv title={metadata.title?.toString()}>
+        <ListDiv>
+            <div className="my-10">
+                <h1 className="text-6xl text-center text-gray-800 font-bold" >{"PARCHEGGI"}</h1>
+            </div>
             <StationList />
         </ListDiv>
     );

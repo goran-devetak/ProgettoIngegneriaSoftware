@@ -9,7 +9,10 @@ export const metadata: Metadata = {
 export default async function ReportDiv() {
 
   return (
-    <ListDiv title={metadata.title?.toString()}>
+    <ListDiv>
+      <div className="my-10">
+        <h1 className="text-6xl text-center text-gray-800 font-bold" >{"SEGNALAZIONI"}</h1>
+      </div>
       <ReportList />
     </ListDiv>
   )

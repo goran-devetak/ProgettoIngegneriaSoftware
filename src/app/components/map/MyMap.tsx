@@ -154,7 +154,6 @@ export default function StationMap() {
             if (!station.isEliminated) {
                 const marker = createStationMarker(station)
                 markerSource.addFeature(marker)
-                console.log(marker.getInfoRectangle())
                 markerSource.addFeature(marker.getInfoRectangle())
             }
         })
