@@ -1,15 +1,16 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/app/lib/dbConnect';
 import StationModel from '@/app/lib/models/station/Station.model';
-import mongoose, { mongo } from 'mongoose';
+import mongoose, { mongo, Mongoose } from 'mongoose';
 import UseModel from '@/app/lib/models/use/Use.model';
 import SlotModel from '@/app/lib/models/slot/Slot.model';
+import { Slot } from '@/app/lib/models/slot/Slot';
 
 export async function GET(req: Request, { params }: { params: { stationID: string, slotID: string } }) {
   await dbConnect();
 
   try {
-    const { stationID, slotID } = params;
+    const { stationID, slotID } = await params;
 
     const station = await StationModel.findById(stationID);
 
@@ -41,39 +42,44 @@ export async function GET(req: Request, { params }: { params: { stationID: strin
   }
 }
 
-export async function PATCH(req: Request, { params }: { params: { stationID: string, slotID: string } }) {
-  const { stationID, slotID } = params;
+export async function PATCH(req: Request, { params }: { params: { stationID: string, slotID: string, isBlocked: boolean } }) {
+  const { stationID, slotID } = await params;
+  const { isBlocked, userId, service, timestamp } = await req.json();
 
-  const { bloccato, userId, service, timestamp } = await req.json();
 
-  if (typeof bloccato !== 'boolean') {
+  if (typeof isBlocked !== 'boolean') {
     return NextResponse.json({ error: 'Invalid state value, must be a boolean.' }, { status: 400 });
   }
 
   try {
     await dbConnect();
 
-    const newUse = new UseModel({
-      userId,
-      service,
-      timestamp,
-    });
-
-    await newUse.save();
-
     const station = await StationModel.findById(stationID);
-
     if (!station) {
       return NextResponse.json({ error: 'Station not found.' }, { status: 404 });
     }
 
-    const slot = station.slotList.find((slot) => (slot._id as mongoose.Types.ObjectId).toString() === slotID);
+
+    const slot = findSlot(station.slotList, slotID)
+
 
     if (!slot) {
       return NextResponse.json({ error: 'Slot not found.' }, { status: 404 });
     }
 
-    slot.bloccato = bloccato;
+    // Creazione del nuovo "Use"
+    const newUse = new UseModel({
+      isBlocked,
+      userId,
+      service,
+      timestamp,
+      stationID
+    });
+
+    await newUse.save();
+
+    // Aggiorna lo slot con il nuovo stato e aggiungi l'uso
+    slot.bloccato = isBlocked;
     slot.uses.push(newUse);
 
     await station.save();
@@ -81,9 +87,20 @@ export async function PATCH(req: Request, { params }: { params: { stationID: str
     return NextResponse.json({
       id: slot._id,
       bloccato: slot.bloccato,
+      newUse,
       uses: slot.uses,
     });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+
+
+function findSlot(slotList: Slot[], slotID: string) {
+  slotList.forEach((slot)=>{
+    console.log(slot.buffer)
+  })
+  //console.log(String(slotList[0].buffer as mongoose.Types.ObjectId))
+}
+
+

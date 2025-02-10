@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
         });
     }
 
-    const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(street)},+${encodeURIComponent(city)},&format=json`);
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(street)},+${encodeURIComponent("Provincia di Trento")},&format=json`);
 
     if (!response.ok) {
         return new Response(JSON.stringify({ error: "Failed to fetch data" }), {

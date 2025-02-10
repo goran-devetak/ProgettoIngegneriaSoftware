@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function ReportPage({ params }: Props) {
-    const { reportID } = use(params); // <-- unwrap `params` con React.use()
+    const { reportID } = use(params);
 
     const [report, setReport] = useState<Report | undefined>(undefined);
     const [station, setStation] = useState<Station | undefined>(undefined);
@@ -27,7 +27,7 @@ export default function ReportPage({ params }: Props) {
             }
         }
         fetchData();
-    }, [reportID]);
+    }, []);
 
     if (!report) {
         return (
@@ -42,10 +42,7 @@ export default function ReportPage({ params }: Props) {
     const email = report.contacts?.email || "/";
     const phone = report.contacts?.phone || "/";
 
-    const handleSetInactive = () => {
-        // Funzione per impostare la stazione come inattiva
-    };
-
+    const stationID: string = String(station?._id)
 
     return (
         <div className="flex flex-col items-center py-5">
@@ -63,11 +60,10 @@ export default function ReportPage({ params }: Props) {
                 </div>
             </div>
             <div className="flex space-x-7 my-5">
-                <button onClick={handleSetInactive} className="font-bold py-2 px-4 rounded bg-red-500 text-white">
-                    Imposta stazione inattiva
-                </button>
-                <ReportStateButton reportID={reportID} solving={true} stationID={station?._id} />
-                <ReportStateButton reportID={reportID} solving={false} stationID={station?._id} />
+                <a href={`/stations/${stationID}`}>
+                    <button type="button"> Vai al parcheggio </button>
+                </a>
+                <ReportStateButton reportID={reportID} isSolved={report.isSolved} stationID={stationID} />
             </div>
         </div>
     );

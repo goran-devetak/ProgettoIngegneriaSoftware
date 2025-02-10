@@ -84,41 +84,57 @@ export async function POST(req: Request, { params }: { params: { stationID: stri
 }
 
 
-export async function PATCH(req: Request, { params }: { params: { stationID: string } }) {
-  const { stationID } = params;
-  const { decrement } = await req.json();
+  export async function PATCH(req: Request, { params }: { params: { stationID: string } }) {
+    const { stationID } = await params;
+    const { type, decrement, activating } = await req.json();
 
-  if (typeof decrement !== 'boolean') {
-    return NextResponse.json({ error: 'Invalid decrement value, must be a boolean.' }, { status: 400 });
-  }
+    try {
+      await dbConnect();
 
-  try {
-    await dbConnect();
+      if (!mongoose.Types.ObjectId.isValid(stationID)) {
+        return NextResponse.json({ error: "Invalid station ID" }, { status: 400 });
+      }
 
-    if (!mongoose.Types.ObjectId.isValid(stationID)) {
-      return NextResponse.json({ error: 'Invalid station ID' }, { status: 400 });
-    }
+      const station = await StationModel.findById(stationID).lean();
+      if (!station) {
+        return NextResponse.json({ error: "Station not found." }, { status: 404 });
+      }
 
-    const station = await StationModel.findById(stationID).lean(); // Usa lean() per evitare problemi con campi mancanti
-    if (!station) {
-      return NextResponse.json({ error: 'Station not found.' }, { status: 404 });
-    }
+      let updatedStation;
 
-    // Modifica solo i campi necessari
-    const newReportCount = Math.max(0, station.reportCount + (decrement ? -1 : 1));
-    const updatedStation = await StationModel.findByIdAndUpdate(
-      stationID,
-      {
-        $set: {
-          reportCount: newReportCount,
-          reported: newReportCount > 0
+      if (type === "updatecount") {
+        if (typeof decrement !== "boolean") {
+          return NextResponse.json({ error: "Invalid decrement value, must be a boolean." }, { status: 400 });
         }
-      },
-      { new: true, runValidators: true } // Assicura che i dati siano validati prima di salvare
-    );
 
-    return NextResponse.json({ message: 'Report count updated', station: updatedStation });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+        const newReportCount = Math.max(0, station.reportCount + (decrement ? -1 : 1));
+        updatedStation = await StationModel.findByIdAndUpdate(
+          stationID,
+          { $set: { reportCount: newReportCount, reported: newReportCount > 0 } },
+          { new: true, runValidators: true }
+        );
+
+      } else if (type === "updatestate") {
+        if (typeof activating !== "boolean") {
+          return NextResponse.json({ error: "Invalid activating value, must be a boolean." }, { status: 400 });
+        }
+
+        if (station.isActive !== activating) {
+          updatedStation = await StationModel.findByIdAndUpdate(
+            stationID,
+            { $set: { isActive: activating } },
+            { new: true, runValidators: true }
+          );
+        } else {
+          return NextResponse.json({ message: "No change needed, state already set." });
+        }
+
+      } else {
+        return NextResponse.json({ error: "Invalid type value" }, { status: 400 });
+      }
+
+      return NextResponse.json({ message: "Station updated", station: updatedStation });
+    } catch (err: any) {
+      return NextResponse.json({ error: err.message }, { status: 500 });
+    }
   }
-}

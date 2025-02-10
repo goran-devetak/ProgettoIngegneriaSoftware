@@ -1,24 +1,33 @@
-import React from "react";
+'use client';
+
+import React, { useEffect, useState } from "react";
 import { Report } from "../../lib/models/report/Report";
 import Link from "next/link";
 import { Station } from "@/app/lib/models/station/Station";
 import { getStationByID } from "@/app/lib/functions/fetching/stationFunctions";
 
-
 interface ReportCardProps {
     report: Report;
 }
 
-async function getStation(stationID: string) {
-    const station: Station | undefined = await getStationByID(stationID)
-    return station ? station : undefined
-
-}
-
-const ReportCardComponent: React.FC<ReportCardProps> = async ({ report }) => {
+const ReportCardComponent: React.FC<ReportCardProps> = ({ report }) => {
     const { _id, description, timestamp, contacts, isSolved, title, stationId } = report;
+    const [station, setStation] = useState<Station | null>(null);
     const col = "font-semibold " + (isSolved ? "text-mygreen" : "text-myred");
-    const station = await getStation(stationId)
+
+    useEffect(() => {
+        const fetchStation = async () => {
+            try {
+                const data = await getStationByID(stationId);
+                setStation(data || null);
+            } catch (error) {
+                console.error("Errore nel fetching della stazione:", error);
+            }
+        };
+
+        fetchStation();
+    }, [stationId]);
+
     return (
         <Link
             href={`./reports/${_id}`}
@@ -26,7 +35,7 @@ const ReportCardComponent: React.FC<ReportCardProps> = async ({ report }) => {
         >
             <div className="col-span-10">
                 <div className="flex space-x-1">
-                    <p className="text-black font-bold">{station?.name}</p>
+                    <p className="text-black font-bold">{station?.name || "Caricamento..."}</p>
                     <p className="text-gray-600 font-bold"> - {title}</p>
                 </div>
                 <div>

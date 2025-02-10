@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Map from 'ol/Map'
 import View from 'ol/View'
@@ -16,9 +16,6 @@ import { COLORS } from '../../constants'
 import 'ol/ol.css'
 import InfoRectangle from './InfoRectangle'
 
-const data = await getAllStations();
-
-// Constants
 const TRENTO_COORDS = {
     SW: [11.01, 45.98],
     NE: [11.24, 46.17]
@@ -32,7 +29,6 @@ const MAP_CONFIG = {
     initialZoom: 14
 } as const
 
-// Helper functions
 const getStationColor = (station: Station): string => {
     if (!station.isActive) return COLORS.red
     return station.reported ? COLORS.orange : COLORS.green
@@ -54,6 +50,17 @@ export default function StationMap() {
     const mapRef = useRef<HTMLDivElement>(null)
     const router = useRouter()
     const mapInstance = useRef<Map | null>(null)
+    const markerSource = useRef(new VectorSource()).current
+    const [stations, setStations] = useState<Station[]>([])
+
+    useEffect(() => {
+        const fetchStations = async () => {
+            const newData = await getAllStations()
+            if (newData) setStations(newData)
+        }
+
+        fetchStations()
+    }, [])
 
     useEffect(() => {
         if (!mapRef.current) return
@@ -63,8 +70,6 @@ export default function StationMap() {
             ...fromLonLat(TRENTO_COORDS.NE)
         ]
 
-        // Initialize map
-        const markerSource = new VectorSource()
         const markerLayer = new VectorLayer({ source: markerSource })
 
         mapInstance.current = new Map({
@@ -82,18 +87,6 @@ export default function StationMap() {
             })
         })
 
-        // Add markers for each station
-        if (data) {
-            data.forEach(station => {
-                if(!station.isEliminated){
-                    const marker = createStationMarker(station)
-                    markerSource.addFeature(marker)
-                    markerSource.addFeature(marker.getInfoRectangle())
-                }
-            })
-        }
-
-        // Handle marker clicks
         mapInstance.current.on('click', (event) => {
             const feature = mapInstance.current?.forEachFeatureAtPixel(
                 event.pixel,
@@ -104,7 +97,6 @@ export default function StationMap() {
             }
         })
 
-        // Handle marker hover effects
         mapInstance.current.on('pointermove', (event) => {
             if (!mapInstance.current) return
             const pixel = mapInstance.current.getEventPixel(event.originalEvent)
@@ -146,7 +138,7 @@ export default function StationMap() {
             target.style.cursor=''
             }
         })
-        // Cleanup
+
         return () => {
             if (mapInstance.current) {
                 mapInstance.current.setTarget(undefined)
@@ -154,6 +146,19 @@ export default function StationMap() {
             }
         }
     }, [router])
+
+    useEffect(() => {
+        markerSource.clear() // Pulisce i marker prima di aggiornare
+
+        stations.forEach(station => {
+            if (!station.isEliminated) {
+                const marker = createStationMarker(station)
+                markerSource.addFeature(marker)
+                console.log(marker.getInfoRectangle())
+                markerSource.addFeature(marker.getInfoRectangle())
+            }
+        })
+    }, [stations])
 
     return <div ref={mapRef} className="h-full w-full z-0" />
 }

@@ -2,6 +2,11 @@
 
 import { useState, useEffect } from "react";
 
+function removeDuplicates(arr: string[]): string[] {
+    return [...new Set(arr)];
+}
+
+
 export default function Advanced() {
     const [street, setStreet] = useState("");
     const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -21,8 +26,18 @@ export default function Advanced() {
 
             if (!response.ok) throw new Error("Errore nella risposta");
 
+            const toSuggest: string[] = []
+
             const data = await response.json();
-            setSuggestions(data.streets || []);
+            const roads = (data.filter((street: { addresstype: string }) => street.addresstype === "road"))
+            roads.forEach((road: { display_name: string; }) => {
+                const splittedRoad = road.display_name.split(",")
+                console.log(road)
+                if (Number(splittedRoad.length - 2)) {
+                    toSuggest.push(splittedRoad[0] + " [" + splittedRoad[splittedRoad.length - 2] + " ]")
+                }
+            });
+            setSuggestions(removeDuplicates(toSuggest) || []);
         } catch (error) {
             console.error("Errore nel caricamento delle strade:", error);
         } finally {

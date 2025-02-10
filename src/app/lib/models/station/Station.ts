@@ -1,8 +1,6 @@
 import { Schema, Document } from 'mongoose';
 import { Address, AddressSchema } from '../address/Address';
 import { Slot, SlotSchema } from '../slot/Slot';
-import { Report, ReportSchema } from '../report/Report';
-
 export interface Station extends Document {
   name: string;
   address: Address;

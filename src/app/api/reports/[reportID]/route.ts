@@ -23,7 +23,7 @@ export async function GET(req: Request, { params }: { params: { reportID: string
 }
 
 export async function PATCH(req: Request, { params }: { params: { reportID: string } }) {
-  const { reportID } = params;
+  const { reportID } = await (params);
   const { isSolved } = await req.json();
   let changed: boolean = false;
 

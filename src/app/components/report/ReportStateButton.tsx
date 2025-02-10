@@ -1,12 +1,12 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 
 interface ReportStateButtonProps {
-    solving: boolean;
+    isSolved: boolean;
     reportID: string;
-    stationID: string
+    stationID: string;
 }
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
 
 const updateReportCount = async (stationID: string, decrement: boolean) => {
     try {
@@ -15,7 +15,7 @@ const updateReportCount = async (stationID: string, decrement: boolean) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ decrement }),
+            body: JSON.stringify({ decrement, type: "updatecount" }),
         });
 
         const data = await response.json();
@@ -27,32 +27,35 @@ const updateReportCount = async (stationID: string, decrement: boolean) => {
     }
 };
 
-const updateReport = async (reportID: string, isSolved: boolean, stationID: string) => {
-    const response = await fetch(`/api/reports/${reportID}`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ isSolved })
-    });
+const updateReport = async (reportID: string, currentIsSolved: boolean, stationID: string) => {
+    const newIsSolved = !currentIsSolved; // Inverte il valore attuale
 
-    const data = await response.json();
-    if (data.updated) {
-        updateReportCount(stationID, isSolved)
+    try {
+        const response = await fetch(`/api/reports/${reportID}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ isSolved: newIsSolved })
+        });
+
+        const data = await response.json();
+        if (data.updated) {
+            await updateReportCount(stationID, newIsSolved);
+            window.location.reload();
+        }
+    } catch (error) {
+        console.error('Errore durante l’aggiornamento del report:', error);
     }
+};
 
-}
-
-export default function ReportStateButton(props: ReportStateButtonProps) {
-    const { reportID, solving, stationID } = props
+export default function ReportStateButton({ isSolved, reportID, stationID }: ReportStateButtonProps) {
     return (
         <button
-            onClick={() => { updateReport(reportID, solving, stationID) }}
-            className={`font-bold py-2 px-4 rounded ${solving ? "bg-green-500" : "bg-orange-500"} text-white`}
+            onClick={() => updateReport(reportID, isSolved, stationID)}
+            className={`font-bold py-2 px-4 rounded ${isSolved ? "bg-orange-500" : "bg-green-500"} text-white`}
         >
-            {solving ? "Segna come risolta" : "Segna come non risolta"}
+            {isSolved ? "Segna come non risolta" : "Segna come risolta"}
         </button>
     );
 }
-
-

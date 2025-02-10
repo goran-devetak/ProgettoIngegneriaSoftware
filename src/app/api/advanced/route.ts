@@ -9,15 +9,6 @@ export async function POST(req: Request) {
   try {
     const { name, address, numSlots, state, reported } = await req.json();
 
-    /*
-    if (!name || !address || num_slots === undefined || !state || !reported) {
-      return NextResponse.json(
-        { success: false, error: 'Missing required fields' },
-        { status: 400 }
-      );
-    }
-      */
-
     const newStation = new StationModel({
       name:name,
       address:address,

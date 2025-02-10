@@ -1,77 +1,69 @@
 "use client"
 
-import { getAllStations, getSlotByID } from "@/app/lib/functions/fetching/stationFunctions";
-import { Slot } from "@/app/lib/models/slot/Slot";
-import { Station } from "@/app/lib/models/station/Station";
 import { useActionState, useEffect, useState } from "react";
+import { getAllActiveStations } from "@/app/lib/functions/fetching/stationFunctions";
+import { Station } from "@/app/lib/models/station/Station";
+import { StationSelector } from "@/app/components/testing/stationSelector";
+import { CategorySelector } from "@/app/components/testing/categorySelector";
+import { SlotSelector } from "@/app/components/testing/slotSelector";
+import { fetchSlots } from "@/app/lib/functions/testing/slotFunctions";
 
 async function reserve(prevState: any, formData: FormData) {
-    console.log(formData)
+    const stationID: string = String(formData.get('station'))
+    const slotID: string = String(formData.get('slot'))
+    const service: string = String(formData.get('service'))
+
+    try {
+        const response = await fetch(`/api/stations/${stationID}/${slotID}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                isBlocked: true,   // true per bloccare, false per sbloccare
+                userId: "00000000",     // ID dell'utente che effettua la modifica
+                service,
+                timestamp: new Date().toISOString(), // Timestamp della modifica
+            }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "Errore durante l'aggiornamento del posto");
+        }
+
+        console.log("Aggiornamento riuscito:", data);
+        return data;
+    } catch (error) {
+        console.error("Errore nell'aggiornare il posto:", error);
+        return null;
+    }
 }
+
+
 
 export default function ReserveSlot() {
     const [state, reserveAction] = useActionState(reserve, undefined);
     const [stations, setStations] = useState<Station[]>([]);
     const [selectedStation, setSelectedStation] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("");
-    const [availableSlots, setAvailableSlots] = useState<({ id: any; originalIndex: number; } | null)[]>([]);
+    const [availableSlots, setAvailableSlots] = useState<{ id: any; originalIndex: number; }[]>([]);
     const [showOptions, setShowOptions] = useState(false);
 
     useEffect(() => {
         async function fetchStations() {
-            const data = await getAllStations();
-            if (data) {
-                setStations(data);
-            }
+            const data = await getAllActiveStations();
+            if (data) setStations(data);
         }
         fetchStations();
     }, []);
 
-    useEffect(() => {
-        if (selectedStation) {
-            setShowOptions(true);
-        } else {
-            setShowOptions(false);
-        }
-    }, [selectedStation]);
+    useEffect(() => setShowOptions(!!selectedStation), [selectedStation]);
 
     useEffect(() => {
-        async function fetchSlots() {
-            if (selectedStation && selectedCategory) {
-                const station = stations.find(st => st._id === selectedStation);
-
-                if (station && station.slotList) {
-                    try {
-                        const slotPromises = station.slotList.map(async (slot, index) => {
-                            const slotTemp = Object.values(slot).map(element => element.toString());
-                            const slotID = slotTemp.slice(0, 24).join('');
-
-                            const res = await fetch(`/api/stations/${station._id}/${slotID}`);
-                            const data = await res.json();
-
-                            if (data.success && !data.slot.bloccato &&
-                                (data.slot.category === selectedCategory || data.slot.category === 'free')) {
-                                return { id: data.slot._id, originalIndex: index }; // Mantieni l'indice originale
-                            }
-                            return null;
-                        });
-
-                        const resolvedSlots = await Promise.all(slotPromises);
-                        setAvailableSlots(resolvedSlots.filter(slot => slot !== null)); // Filtra i valori null
-
-                    } catch (error) {
-                        console.error("Errore nel reperire informazioni sui posti", error);
-                    }
-                } else {
-                    console.warn("Station not found or slotList undefined");
-                }
-            } else {
-                setAvailableSlots([]); // Resetta gli slot disponibili se manca qualcosa
-            }
-        }
-        fetchSlots();
+        fetchSlots(selectedStation, selectedCategory, stations, setAvailableSlots, true);
     }, [selectedStation, selectedCategory, stations]);
-
 
     return (
         <div>
@@ -80,54 +72,9 @@ export default function ReserveSlot() {
             </div>
             <hr className="py-2" />
             <form action={reserveAction} className="flex flex-col">
-                <div className="flex flex-col gap-2 mt-4">
-                    <label className="font-semibold text-sm">Parcheggio</label>
-                    <select
-                        name='station'
-                        className="h-10 px-4 bg-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
-                        id="station"
-                        value={selectedStation}
-                        onChange={(e) => setSelectedStation(e.target.value)}
-                    >
-                        <option value="" disabled>Seleziona un parcheggio...</option>
-                        {stations.map((station, index) => (
-                            !station.isEliminated && station.isActive && (
-                                <option key={index} value={String(station._id)}>
-                                    {station.name}
-                                </option>
-                            )
-                        ))}
-                    </select>
-                </div>
-                <div className="flex flex-col gap-2 mt-4">
-                    <label className="font-semibold text-sm">Servizio</label>
-                    <select
-                        name="service"
-                        className="h-10 px-4 bg-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
-                        value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        required
-                    >
-                        <option value="" disabled>Seleziona il tuo servizio...</option>
-                        <option value="sharing" hidden={!showOptions}>Sharing</option>
-                        <option value="private" hidden={!showOptions}>Personale</option>
-                    </select>
-                </div>
-                <div className="flex flex-col gap-2 mt-4">
-                    <label className="font-semibold text-sm">Posto</label>
-                    <select
-                        name="slot"
-                        className="h-10 px-4 bg-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
-                        defaultValue={""}
-                        required
-                    >
-                        <option value="" disabled> Seleziona un posto...</option>
-                        {availableSlots.map((slot) => (
-                            <option key={slot?.id} value={slot?.id}>{slot?.originalIndex ? slot?.originalIndex + 1 : 0}</option>
-                        ))}
-
-                    </select>
-                </div>
+                <StationSelector stations={stations} selectedStationID={selectedStation} setSelectedStation={setSelectedStation} />
+                <CategorySelector showOptions={showOptions} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
+                <SlotSelector availableSlots={availableSlots} />
                 <button
                     type="submit"
                     className="mt-6 py-2 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-800 transition"
@@ -141,3 +88,6 @@ export default function ReserveSlot() {
         </div>
     );
 }
+
+
+
