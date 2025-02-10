@@ -1,29 +1,31 @@
 import { Metadata } from "next";
 import StatisticheClient from "@/app/components/statistics/StatisticheClient";
-import { subDays } from "date-fns";
 import { getRangeOption, RANGE_OPTIONS } from "@/app/lib/functions/statistics/rangeOptions";
 
 export const metadata: Metadata = {
     title: "STATISTICHE",
 };
 
-export default function Statistiche({searchParams: {UtilizziRange}}: {searchParams:{
-    UtilizziRange?: string
-}}) {
+interface StatisticheProps {
+    searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
 
-    const utilizziRange = getRangeOption(UtilizziRange) ||
-    RANGE_OPTIONS.utlima_settimana
+export default async function Statistiche({ searchParams }: StatisticheProps) {
+    const resolvedSearchParams = await searchParams;
+    const UtilizziRange = typeof resolvedSearchParams.UtilizziRange === "string" 
+        ? resolvedSearchParams.UtilizziRange 
+        : undefined;
 
-    const startDate = utilizziRange.startDate
-    const endDate = utilizziRange.endDate
+    const utilizziRange = getRangeOption(UtilizziRange) || RANGE_OPTIONS.utlima_settimana;
+
     return (
         <div>
             <h1 className="text-6xl text-center text-gray-800 font-bold">
                 {metadata.title?.toString()}
             </h1>
             <StatisticheClient 
-                startDate={startDate ? new Date(startDate) : undefined} 
-                endDate={endDate ? new Date(endDate) : undefined} 
+                startDate={utilizziRange.startDate ? new Date(utilizziRange.startDate) : undefined} 
+                endDate={utilizziRange.endDate ? new Date(utilizziRange.endDate) : undefined} 
             />
         </div>
     );
