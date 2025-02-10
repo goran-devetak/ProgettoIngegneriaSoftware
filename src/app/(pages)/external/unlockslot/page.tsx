@@ -48,11 +48,7 @@ export default function UnlockSlot() {
                     type="submit"
                     className="mt-6 py-2 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-800 transition"
                 >
-                    {state?.success ? "Sbloccando!" : "Sblocca"}
                 </button>
-                {state?.error && (
-                    <p className="mt-4 text-center text-sm text-red-500">{state.error}</p>
-                )}
             </form>
         </div>
     );

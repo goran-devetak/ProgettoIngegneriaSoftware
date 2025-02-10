@@ -1,6 +1,7 @@
 "use client"
 
 import { getAllStations } from "@/app/lib/functions/fetching/stationFunctions";
+import { Station } from "@/app/lib/models/station/Station";
 import { useActionState, useEffect, useState } from "react";
 
 async function report(prevState: any, formData: FormData) {
@@ -35,7 +36,7 @@ async function report(prevState: any, formData: FormData) {
 export default function NewReport() {
     const [state, reportAction] = useActionState(report, undefined);
     const [selectedStation, setSelectedStation] = useState("");
-    const [stations, setStations] = useState([]);
+    const [stations, setStations] = useState<Station[]>([]);
 
     useEffect(() => {
         async function fetchStations() {

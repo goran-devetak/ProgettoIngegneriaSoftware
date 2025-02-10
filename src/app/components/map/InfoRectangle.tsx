@@ -73,7 +73,6 @@ export default class InfoRectangle extends Feature {
         const s = new Style({
             image: new Icon({
                 img: canvas,
-                imgSize: [this.defWidth, this.defHeight],
                 anchor: [0.5, 1],
                 offset: [0, this.offset]
             }),

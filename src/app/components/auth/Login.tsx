@@ -30,7 +30,7 @@ export default function Login() {
                     />
                 </div>
                 {state?.errors?.email && (
-                    <p className="text-red-500 text-sm mt-2">{state.errors.email}</p>
+                    <p className="text-red-500 text-sm mt-2">{/*state.errors.email*/}</p>
                 )}
                 <SubmitButton />
                 <div className="mt-4 text-center text-sm">

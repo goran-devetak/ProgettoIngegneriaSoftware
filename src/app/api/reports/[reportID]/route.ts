@@ -3,15 +3,32 @@ import dbConnect from '@/app/lib/dbConnect';
 import ReportModel from '@/app/lib/models/report/Report.model';
 
 //richiede le informazioni della singola segnalazione
-export async function GET(req: NextRequest, { params }: { params: { reportID: string } }) {
+
+type Context = {
+  params: {
+    reportID: string;
+    then: <TResult1 = any, TResult2 = never>(
+      onfulfilled?: ((value: any) => TResult1 | PromiseLike<TResult1>) | null | undefined,
+      onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null | undefined
+    ) => Promise<TResult1 | TResult2>;
+    catch: <TResult = never>(
+      onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null | undefined
+    ) => Promise<any>;
+    finally: (onfinally?: (() => void) | null | undefined) => Promise<any>;
+    [Symbol.toStringTag]: string;
+  }
+}
+
+export async function GET(
+  req: NextRequest,
+  context: Context
+) {
   try {
     await dbConnect();
-
-    const prm = params;
-    const reportId = prm.reportID
+    const reportId = context.params.reportID;
     const report = await ReportModel.findById(reportId);
 
-    if (!report) {  
+    if (!report) {
       return NextResponse.json({ error: 'Report not found' }, { status: 404 });
     }
 
@@ -21,8 +38,8 @@ export async function GET(req: NextRequest, { params }: { params: { reportID: st
   }
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { reportID: string } }) {
-  const { reportID } = (params);
+export async function PATCH(req: NextRequest, context: Context) {
+  const reportID = (context.params.reportID);
   const { isSolved } = await req.json();
   let changed: boolean = false;
 
