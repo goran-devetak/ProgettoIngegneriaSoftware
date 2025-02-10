@@ -4,9 +4,9 @@ import mongoose from "mongoose";
 import dbConnect from "@/app/lib/dbConnect";
 import SlotModel from "@/app/lib/models/slot/Slot.model";
 
-export async function GET(req: Request, { params }: { params: { stationID: string } }) {
+export async function GET(req: Request, context: { params: { stationID: string } }) {
   try {
-    const { stationID } = params;
+    const { stationID } = context.params;
     if (!stationID || !mongoose.Types.ObjectId.isValid(stationID)) {
       return NextResponse.json(
         { success: false, error: "Invalid station ID" },
@@ -32,11 +32,11 @@ export async function GET(req: Request, { params }: { params: { stationID: strin
   }
 }
 
-export async function POST(req: Request, { params }: { params: { stationID: string } }) {
+export async function POST(req: Request, context: { params: { stationID: string } }) {
   await dbConnect();
 
   try {
-    const { stationID } = params;
+    const { stationID } = context.params;
     const { category } = await req.json();
 
     if (!['free', 'sharing', 'private'].includes(category)) {
@@ -84,7 +84,7 @@ export async function POST(req: Request, { params }: { params: { stationID: stri
 }
 
 
-  export async function PATCH(req: Request, { params }: { params: { stationID: string } }) {
+  export async function PATCH(req: Request, context: { params: { stationID: string } }) {
     const { stationID } = params;
     const { type, decrement, activating } = await req.json();
 

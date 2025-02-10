@@ -3,7 +3,6 @@ import UserModel from "@/app/lib/models/auth/user/User.model";
 import dbConnect from "@/app/lib/dbConnect";
 import bcrypt from "bcrypt"
 import { getUserByEmail } from "@/app/lib/functions/auth/userFunctions";
-import { User } from "@/app/lib/models/auth/user/User";
 
 export async function POST(req: Request) {
     try {

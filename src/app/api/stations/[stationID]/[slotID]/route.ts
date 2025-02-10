@@ -5,11 +5,11 @@ import UseModel from '@/app/lib/models/use/Use.model';
 import SlotModel from '@/app/lib/models/slot/Slot.model';
 import { Slot } from '@/app/lib/models/slot/Slot';
 
-export async function GET(req: Request, { params }: { params: { stationID: string, slotID: string } }) {
+export async function GET(req: Request, context: { params: { stationID: string, slotID: string } }) {
   await dbConnect();
 
   try {
-    const { stationID, slotID } = params;
+    const { stationID, slotID } = context.params;
 
     const station = await StationModel.findById(stationID);
 
@@ -41,8 +41,8 @@ export async function GET(req: Request, { params }: { params: { stationID: strin
   }
 }
 
-export async function PATCH(req: Request, { params }: { params: { stationID: string, slotID: string, isBlocked: boolean } }) {
-  const { stationID, slotID } = params;
+export async function PATCH(req: Request, context: { params: { stationID: string, slotID: string, isBlocked: boolean } }) {
+  const { stationID, slotID } = context.params;
   const { isBlocked, userId, service, timestamp } = await req.json();
 
 
