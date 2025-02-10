@@ -3,11 +3,11 @@ import dbConnect from '@/app/lib/dbConnect';
 import ReportModel from '@/app/lib/models/report/Report.model';
 
 //richiede le informazioni della singola segnalazione
-export async function GET(req: Request, context: { params: { reportID: string } }) {
+export async function GET(req: Request, context: { reportID: string }) {
   try {
     await dbConnect();
 
-    const prm = context.params;
+    const prm = context;
     const reportId = prm.reportID
     const report = await ReportModel.findById(reportId);
 
@@ -21,8 +21,8 @@ export async function GET(req: Request, context: { params: { reportID: string } 
   }
 }
 
-export async function PATCH(req: Request, context: { params: { reportID: string } }) {
-  const { reportID } = (context.params);
+export async function PATCH(req: Request, context: { reportID: string }) {
+  const { reportID } = (context);
   const { isSolved } = await req.json();
   let changed: boolean = false;
 

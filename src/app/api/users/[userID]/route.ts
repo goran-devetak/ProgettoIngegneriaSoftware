@@ -5,11 +5,11 @@ import UserModel from '@/app/lib/models/auth/user/User.model';
 
 
 
-export async function GET(req: Request, context: { params: { userID: string } }) {
+export async function GET(req: Request, context: { userID: string }) {
     try {
         await dbConnect();
 
-        const userID = (context.params).userID;
+        const userID = (context).userID;
 
         const user = await UserModel.findById(userID);
 

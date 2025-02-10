@@ -3,7 +3,7 @@ import UseModel from "@/app/lib/models/use/Use.model";
 import { NextResponse } from "next/server";
 
 
-export async function GET(req: Request, context: { params: { bottomTimeStamp: number, upperTimeStamp: number } }) {
+export async function GET(req: Request, context: { bottomTimeStamp: number, upperTimeStamp: number }) {
     await dbConnect();
     try {
         const url = new URL(req.url);
