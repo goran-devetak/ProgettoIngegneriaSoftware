@@ -7,8 +7,8 @@ const COLORS = {
   };
 
   const URLS = {
-    homepage: "http://localhost:3000",
-    apis:"http://localhost:3000/api",
+    homepage: "https://progetto-ingegneria-software.vercel.app/",
+    apis:"https://progetto-ingegneria-software.vercel.app/api",
   };
 
   
