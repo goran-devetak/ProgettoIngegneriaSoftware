@@ -6,10 +6,9 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({
-    children, title
+    children
 }: {
-    children: React.ReactNode,
-    title: string
+    children: React.ReactNode
 }) {
     return (
         <div className='h-screen w-screen justify-center items-center'>
