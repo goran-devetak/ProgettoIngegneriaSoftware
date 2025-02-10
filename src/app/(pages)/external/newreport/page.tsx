@@ -1,16 +1,14 @@
 "use client"
 
-import { getAllStations } from "@/app/lib/functions/fetching/stationFunctions"
-import { useActionState, useState } from "react";
-
-const stations = await getAllStations()
+import { getAllStations } from "@/app/lib/functions/fetching/stationFunctions";
+import { useActionState, useEffect, useState } from "react";
 
 async function report(prevState: any, formData: FormData) {
     const data = {
         title: formData.get("title"),
         description: formData.get("desc"),
         stationId: formData.get("station"),
-        photo: (formData.get("media") as File).name,
+        photo: (formData.get("media") as File)?.name || "",
         contacts: {
             email: formData.get("email"),
             phone: formData.get("cel")
@@ -37,16 +35,25 @@ async function report(prevState: any, formData: FormData) {
 export default function NewReport() {
     const [state, reportAction] = useActionState(report, undefined);
     const [selectedStation, setSelectedStation] = useState("");
+    const [stations, setStations] = useState([]);
+
+    useEffect(() => {
+        async function fetchStations() {
+            const data = await getAllStations();
+            if(data) setStations(data);
+        }
+        fetchStations();
+    }, []);
 
     return (
         <div>
             <div className="pb-2">
-                <h1 className="text-4xl text-center text-gray-800 font-bold" >Segnala un parcheggio</h1>
+                <h1 className="text-4xl text-center text-gray-800 font-bold">Segnala un parcheggio</h1>
             </div>
             <hr className="py-2" />
             <form action={reportAction} className="flex flex-col">
                 <div className="flex flex-col gap-2 mt-4">
-                    <label className="font-semibold text-sm">Titolo sengnalazione</label>
+                    <label className="font-semibold text-sm">Titolo segnalazione</label>
                     <input
                         name="title"
                         className="h-10 px-4 bg-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
@@ -111,7 +118,7 @@ export default function NewReport() {
                         name="cel"
                         className="h-10 px-4 bg-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
                         type="tel"
-                        pattern="^\+?[0-9\s\-]{7,15}$"
+                        pattern="^\\+?[0-9\\s\\-]{7,15}$"
                         required
                     />
                 </div>
@@ -127,5 +134,5 @@ export default function NewReport() {
                 )}
             </form>
         </div>
-    )
+    );
 }

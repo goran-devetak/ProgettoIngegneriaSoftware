@@ -1,4 +1,4 @@
-export default function ListDiv({ children, title }: { children: React.ReactNode, title: string | undefined }) {
+export default function ListDiv({ children, title }: { children: React.ReactNode, title: string }) {
     return (
         <div className="h-50">
             <div className="my-10">
