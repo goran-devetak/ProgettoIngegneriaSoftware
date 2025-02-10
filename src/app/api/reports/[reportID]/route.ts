@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/app/lib/dbConnect';
 import ReportModel from '@/app/lib/models/report/Report.model';
-import StationModel from '@/app/lib/models/station/Station.model';
 
 //richiede le informazioni della singola segnalazione
 export async function GET(req: Request, { params }: { params: { reportID: string } }) {
   try {
     await dbConnect();
 
-    const prm = await params;
+    const prm = params;
     const reportId = prm.reportID
     const report = await ReportModel.findById(reportId);
 
@@ -23,7 +22,7 @@ export async function GET(req: Request, { params }: { params: { reportID: string
 }
 
 export async function PATCH(req: Request, { params }: { params: { reportID: string } }) {
-  const { reportID } = await (params);
+  const { reportID } = (params);
   const { isSolved } = await req.json();
   let changed: boolean = false;
 

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/app/lib/dbConnect';
 import StationModel from '@/app/lib/models/station/Station.model';
-import mongoose, { mongo, Mongoose } from 'mongoose';
 import UseModel from '@/app/lib/models/use/Use.model';
 import SlotModel from '@/app/lib/models/slot/Slot.model';
 import { Slot } from '@/app/lib/models/slot/Slot';
@@ -10,7 +9,7 @@ export async function GET(req: Request, { params }: { params: { stationID: strin
   await dbConnect();
 
   try {
-    const { stationID, slotID } = await params;
+    const { stationID, slotID } = params;
 
     const station = await StationModel.findById(stationID);
 
@@ -43,7 +42,7 @@ export async function GET(req: Request, { params }: { params: { stationID: strin
 }
 
 export async function PATCH(req: Request, { params }: { params: { stationID: string, slotID: string, isBlocked: boolean } }) {
-  const { stationID, slotID } = await params;
+  const { stationID, slotID } = params;
   const { isBlocked, userId, service, timestamp } = await req.json();
 
 

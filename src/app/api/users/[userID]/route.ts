@@ -9,7 +9,7 @@ export async function GET(req: Request, { params }: { params: { userID: string }
     try {
         await dbConnect();
 
-        const userID = (await params).userID;
+        const userID = (params).userID;
 
         const user = await UserModel.findById(userID);
 

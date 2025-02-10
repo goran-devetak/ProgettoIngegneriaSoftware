@@ -6,7 +6,7 @@ import SlotModel from "@/app/lib/models/slot/Slot.model";
 
 export async function GET(req: Request, { params }: { params: { stationID: string } }) {
   try {
-    const { stationID } = await params;
+    const { stationID } = params;
     if (!stationID || !mongoose.Types.ObjectId.isValid(stationID)) {
       return NextResponse.json(
         { success: false, error: "Invalid station ID" },
@@ -36,7 +36,7 @@ export async function POST(req: Request, { params }: { params: { stationID: stri
   await dbConnect();
 
   try {
-    const { stationID } = await params;
+    const { stationID } = params;
     const { category } = await req.json();
 
     if (!['free', 'sharing', 'private'].includes(category)) {
@@ -85,7 +85,7 @@ export async function POST(req: Request, { params }: { params: { stationID: stri
 
 
   export async function PATCH(req: Request, { params }: { params: { stationID: string } }) {
-    const { stationID } = await params;
+    const { stationID } = params;
     const { type, decrement, activating } = await req.json();
 
     try {
