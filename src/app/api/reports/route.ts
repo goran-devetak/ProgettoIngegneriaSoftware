@@ -1,10 +1,10 @@
 import dbConnect from "@/app/lib/dbConnect";
 import ReportModel from "@/app/lib/models/report/Report.model";
 import StationModel from "@/app/lib/models/station/Station.model";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   await dbConnect();
   try {
     const { searchParams } = new URL(req.url);

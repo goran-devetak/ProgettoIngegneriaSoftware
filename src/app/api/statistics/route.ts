@@ -1,9 +1,9 @@
 import dbConnect from "@/app/lib/dbConnect";
 import UseModel from "@/app/lib/models/use/Use.model";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 
-export async function GET(req: Request, context: { bottomTimeStamp: number, upperTimeStamp: number }) {
+export async function GET(req: NextRequest, { params }: { params: { bottomTimeStamp: number, upperTimeStamp: number } }) {
     await dbConnect();
     try {
         const url = new URL(req.url);

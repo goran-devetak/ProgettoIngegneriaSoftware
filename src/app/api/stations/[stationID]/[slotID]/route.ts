@@ -1,15 +1,16 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/app/lib/dbConnect';
 import StationModel from '@/app/lib/models/station/Station.model';
+import mongoose, { mongo, Mongoose } from 'mongoose';
 import UseModel from '@/app/lib/models/use/Use.model';
 import SlotModel from '@/app/lib/models/slot/Slot.model';
 import { Slot } from '@/app/lib/models/slot/Slot';
 
-export async function GET(req: Request, context: { stationID: string, slotID: string }) {
+export async function GET(req: NextRequest, { params }: { params: { stationID: string, slotID: string } }) {
   await dbConnect();
 
   try {
-    const { stationID, slotID } = context;
+    const { stationID, slotID } = params;
 
     const station = await StationModel.findById(stationID);
 
@@ -41,8 +42,8 @@ export async function GET(req: Request, context: { stationID: string, slotID: st
   }
 }
 
-export async function PATCH(req: Request, context: { stationID: string, slotID: string, isBlocked: boolean}) {
-  const { stationID, slotID } = context;
+export async function PATCH(req: NextRequest, { params }: { params: { stationID: string, slotID: string, isBlocked: boolean } }) {
+  const { stationID, slotID } = params;
   const { isBlocked, userId, service, timestamp } = await req.json();
 
 
@@ -96,7 +97,7 @@ export async function PATCH(req: Request, context: { stationID: string, slotID: 
 
 
 function findSlot(slotList: Slot[], slotID: string) {
-  slotList.forEach((slot) => {
+  slotList.forEach((slot)=>{
     console.log(slot.buffer)
   })
   //console.log(String(slotList[0].buffer as mongoose.Types.ObjectId))

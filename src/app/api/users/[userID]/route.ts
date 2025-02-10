@@ -1,15 +1,15 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/app/lib/dbConnect';
 import UserModel from '@/app/lib/models/auth/user/User.model';
 
 
 
 
-export async function GET(req: Request, context: { userID: string }) {
+export async function GET(req: NextRequest, { params }: { params: { userID: string } }) {
     try {
         await dbConnect();
 
-        const userID = (context).userID;
+        const userID = ( params).userID;
 
         const user = await UserModel.findById(userID);
 
@@ -24,7 +24,7 @@ export async function GET(req: Request, context: { userID: string }) {
 }
 
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
         await dbConnect();
 

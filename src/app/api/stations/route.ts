@@ -1,9 +1,9 @@
 import dbConnect from "@/app/lib/dbConnect";
 import StationModel from "@/app/lib/models/station/Station.model";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
     await dbConnect();
     try {
         const { searchParams } = new URL(req.url);
@@ -24,7 +24,7 @@ export async function GET(req: Request) {
 
 
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     await dbConnect();
 
     try {

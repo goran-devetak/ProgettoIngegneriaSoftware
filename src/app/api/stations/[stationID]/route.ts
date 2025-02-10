@@ -1,12 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import StationModel from "@/app/lib/models/station/Station.model";
 import mongoose from "mongoose";
 import dbConnect from "@/app/lib/dbConnect";
 import SlotModel from "@/app/lib/models/slot/Slot.model";
 
-export async function GET(req: Request, context: { stationID: string } ) {
+export async function GET(req: NextRequest, { params }: { params: { stationID: string } }) {
   try {
-    const { stationID } = context;
+    const { stationID } = params;
     if (!stationID || !mongoose.Types.ObjectId.isValid(stationID)) {
       return NextResponse.json(
         { success: false, error: "Invalid station ID" },
@@ -32,11 +32,11 @@ export async function GET(req: Request, context: { stationID: string } ) {
   }
 }
 
-export async function POST(req: Request, context: { stationID: string } ) {
+export async function POST(req: NextRequest, { params }: { params: { stationID: string } }) {
   await dbConnect();
 
   try {
-    const { stationID } = context;
+    const { stationID } = params;
     const { category } = await req.json();
 
     if (!['free', 'sharing', 'private'].includes(category)) {
@@ -84,8 +84,8 @@ export async function POST(req: Request, context: { stationID: string } ) {
 }
 
 
-  export async function PATCH(req: Request, context: { stationID: string  }) {
-    const { stationID } = context;
+  export async function PATCH(req: NextRequest, { params }: { params: { stationID: string } }) {
+    const { stationID } = await params;
     const { type, decrement, activating } = await req.json();
 
     try {

@@ -1,17 +1,17 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/app/lib/dbConnect';
 import ReportModel from '@/app/lib/models/report/Report.model';
 
 //richiede le informazioni della singola segnalazione
-export async function GET(req: Request, context: { reportID: string }) {
+export async function GET(req: NextRequest, { params }: { params: { reportID: string } }) {
   try {
     await dbConnect();
 
-    const prm = context;
+    const prm = params;
     const reportId = prm.reportID
     const report = await ReportModel.findById(reportId);
 
-    if (!report) {
+    if (!report) {  
       return NextResponse.json({ error: 'Report not found' }, { status: 404 });
     }
 
@@ -21,8 +21,8 @@ export async function GET(req: Request, context: { reportID: string }) {
   }
 }
 
-export async function PATCH(req: Request, context: { reportID: string }) {
-  const { reportID } = (context);
+export async function PATCH(req: NextRequest, { params }: { params: { reportID: string } }) {
+  const { reportID } = (params);
   const { isSolved } = await req.json();
   let changed: boolean = false;
 

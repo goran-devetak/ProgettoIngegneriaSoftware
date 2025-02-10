@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import UserModel from "@/app/lib/models/auth/user/User.model";
 import dbConnect from "@/app/lib/dbConnect";
 import bcrypt from "bcrypt"
 import { getUserByEmail } from "@/app/lib/functions/auth/userFunctions";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
         await dbConnect();
         const saltRounds = 10
