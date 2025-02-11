@@ -1,0 +1,635 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: API Park&Charge
+  description: Api per gestire i parcheggi dei monopattini nel comune di Trento
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/GORANDEVETAK/ProgAPI/1.0.0
+  - url: https://api.parking-comune.it/v1
+
+paths:
+  /users:
+    post:
+      summary: Create a new user
+      description: Adds a new user to the database if the ID does not already exist.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  description: Unique identifier for the user.
+                name:
+                  type: string
+                  description: User's first name.
+                password:
+                  type: string
+                  format: password
+                  description: User's password (stored securely).
+                stillExisting:
+                  type: boolean
+                  description: Indicates if the user is active (default is `true`).
+              required:
+                - _id
+                - name
+                - password
+      responses:
+        201:
+          description: User created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        400:
+          description: Missing required fields.
+        409:
+          description: Conflict - User with this ID already exists.
+        500:
+          description: Internal server error.
+  
+  /users/{userID}:
+    get:
+      summary: Get user by ID
+      description: Fetches a user from the database using their unique ID.
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          description: The unique identifier of the user.
+          schema:
+            type: string
+      responses:
+        200:
+          description: User retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        404:
+          description: User not found.
+        500:
+          description: Internal server error.
+
+  /stations:
+    get: 
+      description: Returns the list of stations
+      responses:
+        200:
+          description: Station list returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/stations'
+        404:
+          description: Page not found
+        500:
+          description: Internal server error
+          
+  /advanced: 
+    post:
+      description: Creates a new station in the database
+      requestBody: 
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: 
+                  type: string
+                address:
+                  $ref: '#/components/schemas/address'
+                num_slots:
+                  type: number
+                reportCount:
+                  type: number
+                isActive:
+                  type: boolean
+                reported:
+                  type: boolean
+                isEliminated:
+                  type: boolean
+                slotList:
+                  $ref: '#/components/schemas/slots'
+                reportList:
+                  $ref: '#/components/schemas/reports'
+      responses:
+        200:
+          description: New station added successfully
+        400:
+          description: Missing required fields
+        500:
+          description: Internal sever error
+    
+    get:
+      summary: Get coordinates for a street and city
+      description: Returns the latitude and longitude of a given street and city using OpenStreetMap API
+      parameters:
+        - name: city
+          in: query
+          required: true
+          description: Name of the city
+          schema:
+            type: string
+        - name: street
+          in: query
+          required: true
+          description: Name of the street
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successfully retrieved coordinates
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  latitude:
+                    type: number
+                  longitude:
+                    type: number
+                  name: 
+                    type: string
+                  zipCode:
+                    type: number
+        400:
+          description:  Missing city or street in query parameters
+        500: 
+          description: Internal sever error
+        
+  /stations/{id}:
+    get:
+      description: Returns information about a specific station
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The ID of the station
+          schema:
+            type: string
+      responses:
+        200:
+          description: Station returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/station'
+        404:
+          description: Station not found
+        500:
+          description: Internal server error
+            
+    patch:
+      summary: Update a station's report count
+      description: Increments or decrements the report count for a given station. If the count is 0, reported is set to false
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          description: The ID of the station
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                decrement:
+                  type: boolean
+                  description: if true, decreases the report count
+      responses:
+        200:
+          description: Successfully updated the report count
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: 
+                    type: number
+                  reportCount:
+                    type: number
+                  reported:
+                    type: boolean
+        400:
+          description: Invalid request
+        404:
+          description: Station not found
+        500:
+          description: Internal server error
+                    
+    post:
+      description: Adds a slot to the current station
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          description: ID of the station
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category:
+                  type: string
+                  enum: [free, sharing, private]
+      responses:
+        200:
+          description: New slot added successfully
+        400:
+          description: Invalid category
+        404:
+          description: Updated station not found
+        500:
+          description: Internal server error
+  
+  /stations/{id}/{slotid}:
+    get:
+      description: Returns the info about a single slot
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the station
+          schema:
+            type: string
+        - in: path
+          name: slotid
+          required: true
+          description: ID of the slot
+          schema:
+            type: string
+      responses:
+        200:
+          description: Slot returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/slot'
+        404:
+          description: Slot or Station not found
+        500:
+          description: Internal server error
+                
+    patch:
+      description: Changes if a slot is blocked or not
+      operationId: changeBlockedSlot
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          description: ID of the station
+          schema:
+            type: string
+        - in: path
+          name: slotid
+          required: true
+          description: ID of the slot
+          schema:
+            type: string
+      requestBody:
+        description: New state to update the current one
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: number
+              required: 
+                - userId
+      responses:
+        200:
+          description: Slot state updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  isBlocked:
+                    type: boolean
+        400:
+          description: Invalid state
+        404:
+          description: Station or Slot not found
+    
+    post:
+      description: add a use to the slot
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          description: ID of the station
+          schema:
+            type: string
+        - in: path
+          name: slotid
+          required: true
+          description: ID of the slot
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isBlocked:
+                  type: boolean
+                userID:
+                  type: number
+                service:
+                  type: string
+                timestamp:
+                  type: number
+                stationID:
+                  type: string
+      responses:
+        200:
+          description: use added successfully to teh slot
+        500:
+          description: Internal server error
+        
+      
+  
+  /reports:
+    get:
+      description: Returns the list of reports
+      responses:
+        200:
+          description: List of reports returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reports'
+        404:
+          description: Reports not found
+    
+    post:
+      description: Adds a new report
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description: 
+                  type: string
+                photo:
+                  type: string
+                timestamp:
+                  type: number
+                stationID:
+                  type: string
+                isSolved:
+                  type: boolean
+                contacts:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                    phone:
+                      type: number
+      responses:
+        200:
+          description: New report created successfully
+        404:
+          description: Station not found
+        400:
+          description: Missing required fields
+        500:
+          description: Internal server error
+  
+  /reports/{id}:
+    get:
+      description: Returns info about a specific report
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the report
+          schema:
+            type: string
+      responses:
+        200:
+          description: Report returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/report'
+        404:
+          description: Report not found
+        500: 
+          description: Internal server error
+    
+    patch:
+      description: changes isSolved to true or false
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the report
+          schema:
+            type: integer
+      requestBody:
+        description: value for isSolved
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                state:
+                  type: boolean
+              required:
+                - isSolved
+      responses:
+        200:
+          description: Report isSolved updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  isSolved:
+                    type: boolean
+        400:
+          description: isSolved not valid
+        404:
+          description: Report not found
+        500:
+          description: Internal server error
+  
+  /statistics:
+    get:
+      summary: Retrieve usage statistics
+      description: Returns the list of uses between two timestamps
+      parameters:
+        - name: bottomTimeStamp
+          in: query
+          required: true
+          description: bottom timestamp of the uses
+          schema: 
+            type: integer
+        - name: upperTimeStamp
+          in: query
+          required: true
+          description: upper timestamp of the uses
+          schema:
+            type: integer
+      responses:
+        200:
+          description: List of uses returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/uses'
+        404:
+          description: Uses not found
+        500:
+          description: Internal server error
+  
+components:
+  schemas:
+    station:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          $ref: '#/components/schemas/address'
+        numSlots:
+          type: number
+        isActive:
+          type: boolean
+        reported:
+          type: boolean
+        isEliminated:
+          type: boolean
+        slotList:
+          type: array
+          items:
+            $ref: '#/components/schemas/slot'
+        reportCount:
+          type: number
+          
+    stations:
+      type: array
+      items:
+        $ref: '#/components/schemas/station'
+            
+    slot:
+      type: object
+      properties:
+        bloccato:
+          type: boolean
+        category:
+          type: string
+          enum: [free, sharing, private]
+        isEliminated:
+          type: boolean
+        uses:
+          type: array
+          items:
+            $ref: '#/components/schemas/use'
+        
+    slots:
+      type: array
+      items:
+        $ref: '#/components/schemas/slot'
+    
+    report:
+      type: object
+      properties:
+        stationID:
+          type: string
+        title:
+          type: string
+        isSolved:
+          type: boolean
+        description:
+          type: string
+        photo:
+          type: string
+        timestamp:
+          type: number
+        contacts:
+          type: object
+          properties:
+            email:
+              type: string
+            phone:
+              type: number
+    
+    reports:
+      type: array
+      items:
+        $ref: '#/components/schemas/report'
+              
+    address:
+      type: object
+      properties:
+        street:
+          type: string
+        number:
+          type: number
+        city:
+          type: string
+        zipCode:
+          type: number
+        longitude:
+          type: number
+        latitude: 
+           type: number
+           
+    use:
+      type: object
+      properties:
+        userId:
+          type: number
+        timestamp:
+          type: number
+        isBlocked:
+          type: boolean
+        service:
+          type: string
+        stationID:
+          type: string
+    
+    uses:
+      type: array
+      items:
+        $ref: '#/components/schemas/use'
+    
+    user:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        stillExisting:
+          type: boolean
