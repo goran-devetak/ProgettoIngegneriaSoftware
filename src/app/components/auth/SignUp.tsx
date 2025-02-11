@@ -36,7 +36,7 @@ async function signUp(prevState: any, formData: FormData) {
 }
 
 export default function SignUp() {
-    const [state, signUpAction] = useActionState(signUp, undefined);
+    const [state, signUpAction, pending] = useActionState(signUp, undefined);
 
     return (
         <div className="flex justify-center h-screen items-center">
@@ -44,7 +44,7 @@ export default function SignUp() {
                 <div className="pb-2">
                     <h1 className="text-4xl text-center text-gray-800 font-bold" >Registrazione</h1>
                 </div>
-                <hr className="py-2"/>
+                <hr className="py-2" />
                 <div className="flex flex-col gap-2 mt-4">
                     <label className="font-semibold text-sm">Nome</label>
                     <input
@@ -82,6 +82,7 @@ export default function SignUp() {
                     />
                 </div>
                 <button
+                    disabled={pending}
                     type="submit"
                     className="mt-6 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-800 transition"
                 >

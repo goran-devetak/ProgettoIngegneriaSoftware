@@ -17,14 +17,14 @@ export async function login(prevState: any, formData: FormData) {
     const formDataObj = Object.fromEntries(formData.entries());
 
     if (!formDataObj.email || !formDataObj.password) {
-        return { errors: { email: ["Tutti i campi sono obbligatori"] } };
+        return { errors: { email: "Tutti i campi sono obbligatori" } };
     }
 
     const result = LoginSchemaZod.safeParse(formDataObj);
 
     if (!result.success) {
         return {
-            errors: { email: [result.error.flatten().fieldErrors] }
+            errors: { email: result.error.flatten() }
         };
     }
 
@@ -33,14 +33,14 @@ export async function login(prevState: any, formData: FormData) {
     const registeredUser = await getUserByEmail(email) as unknown as User;
 
     if (!registeredUser) {
-        return { errors: { email: ["Utente non trovato"] } };
+        return { errors: { email: "Utente non trovato" } };
     }
 
     const isCorrect = await verifyPassword(password, registeredUser.password);
 
     if (!isCorrect) {
         return {
-            errors: { email: ["Credenziali errate"] }
+            errors: { email: "Credenziali errate" }
         };
     }
 

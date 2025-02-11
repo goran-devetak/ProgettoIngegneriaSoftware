@@ -29,7 +29,7 @@ export default function Login() {
                         type="password"
                     />
                 </div>
-                {state?.errors?.email && (
+                {state?.errors?.email && (console.log(state.errors.email),
                     <p className="text-red-500 text-sm mt-2">{String(state.errors.email)}</p>
                 )}
                 <SubmitButton />

@@ -13,5 +13,5 @@ export const LoginSchema = new Schema<Login>({
 
 export const LoginSchemaZod = z.object({
     email: z.string().email({ message: "Mail non valida" }).trim(),
-    password: z.string().min(8, { message: "" }).trim()
+    password: z.string().min(1, { message: "" }).trim()
 })
