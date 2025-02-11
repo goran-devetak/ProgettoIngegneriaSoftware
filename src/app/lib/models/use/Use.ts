@@ -1,11 +1,11 @@
-import {Schema, Document} from 'mongoose';
+import { Schema, Document } from 'mongoose';
 
-export interface Use extends Document{
+export interface Use extends Document {
   userId: number;
   timestamp: number;
   isBlocked: boolean;
   service: string;
-  stationID: number;
+  stationID: string;
 }
 
 export const UseSchema = new Schema<Use>({
@@ -13,5 +13,5 @@ export const UseSchema = new Schema<Use>({
   timestamp: { type: Number, required: true },
   isBlocked: { type: Boolean, required: true },
   service: { type: String, required: true },
-  stationID: {type: Number, required: true}
+  stationID: { type: String, required: true }
 });

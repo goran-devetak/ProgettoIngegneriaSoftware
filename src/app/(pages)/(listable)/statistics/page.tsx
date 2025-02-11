@@ -12,20 +12,22 @@ interface StatisticheProps {
 
 export default async function Statistiche({ searchParams }: StatisticheProps) {
     const resolvedSearchParams = await searchParams;
-    const UtilizziRange = typeof resolvedSearchParams.UtilizziRange === "string" 
-        ? resolvedSearchParams.UtilizziRange 
+    const UtilizziRange = typeof resolvedSearchParams.UtilizziRange === "string"
+        ? resolvedSearchParams.UtilizziRange
         : undefined;
 
     const utilizziRange = getRangeOption(UtilizziRange) || RANGE_OPTIONS.utlima_settimana;
 
     return (
         <div>
-            <h1 className="text-6xl text-center text-gray-800 font-bold">
-                {metadata.title?.toString()}
-            </h1>
-            <StatisticheClient 
-                startDate={utilizziRange.startDate ? new Date(utilizziRange.startDate) : undefined} 
-                endDate={utilizziRange.endDate ? new Date(utilizziRange.endDate) : undefined} 
+            <div className="my-6">
+                <h1 className="text-6xl text-center font-bold">
+                    {metadata.title?.toString()}
+                </h1>
+            </div>
+            <StatisticheClient
+                startDate={utilizziRange.startDate ? new Date(utilizziRange.startDate) : undefined}
+                endDate={utilizziRange.endDate ? new Date(utilizziRange.endDate) : undefined}
             />
         </div>
     );

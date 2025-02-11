@@ -3,12 +3,12 @@ import { Use } from "../../models/use/Use";
 import { URLS } from "@/app/constants";
 
 
-export async function getUses(startDate?: Date, endDate?: Date): Promise<Use[] | undefined>{
-    try{
-        if(!endDate){
+export async function getUses(startDate?: Date, endDate?: Date): Promise<Use[] | undefined> {
+    try {
+        if (!endDate) {
             endDate = new Date();
         }
-        if(!startDate){
+        if (!startDate) {
             startDate = new Date(0);
         }
         const start = getUnixTimeStamp(startDate);
@@ -19,18 +19,17 @@ export async function getUses(startDate?: Date, endDate?: Date): Promise<Use[] |
             cache: "no-store",
         });
 
-        if(!res.ok){
+        if (!res.ok) {
             throw new Error("Failed to fetch uses");
         }
         return res.json();
 
-    }catch (error){
+    } catch (error) {
         console.error("Error fetching uses", error);
         return undefined;
     }
-
 }
 
 const getUnixTimeStamp = (date: Date): number => {
-    return Math.floor(date.getTime() /1000)
+    return Math.floor(date.getTime() / 1000)
 } 

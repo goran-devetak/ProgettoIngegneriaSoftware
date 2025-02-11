@@ -14,16 +14,16 @@ async function reserve(prevState: any, formData: FormData) {
     const service: string = String(formData.get('service'))
 
     try {
-        const response = await fetch(`/api/stations/${stationID}/${slotID}`, {
+        const response = await fetch(`/api/stations/${stationID}/${slotID}/adduse`, {
             method: "PATCH",
-            headers: {
+            headers: {  
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                isBlocked: true,   // true per bloccare, false per sbloccare
-                userId: "00000000",     // ID dell'utente che effettua la modifica
+                isBlocked: true,
+                userId: "00000000",
                 service,
-                timestamp: new Date().toISOString(), // Timestamp della modifica
+                timestamp: Date.now(),
             }),
         });
 
@@ -31,10 +31,28 @@ async function reserve(prevState: any, formData: FormData) {
 
         if (!response.ok) {
             throw new Error(data.error || "Errore durante l'aggiornamento del posto");
-        }
+        } else {
+            const response2 = await fetch('/api/uses', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId: '0',
+                    timestamp: Math.floor(Date.now()/1000),
+                    isBlocked: true,
+                    service: service,
+                    stationID: stationID
+                }),
+            });
 
-        console.log("Aggiornamento riuscito:", data);
-        return data;
+            const result = await response2.json();
+            if (!response2.ok) {
+                console.error(result.error);
+            } else {
+                console.log('Success:', result);
+                window.location.reload()
+            }
+            return result
+        }
     } catch (error) {
         console.error("Errore nell'aggiornare il posto:", error);
         return null;

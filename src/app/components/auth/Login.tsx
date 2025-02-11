@@ -12,7 +12,7 @@ export default function Login() {
                 <div className="pb-2">
                     <h1 className="text-4xl text-center text-gray-800 font-bold">Accesso</h1>
                 </div>
-                <hr className="py-2"/>
+                <hr className="py-2" />
                 <div className="flex flex-col gap-2">
                     <label className="font-semibold text-sm">Email</label>
                     <input
@@ -30,7 +30,7 @@ export default function Login() {
                     />
                 </div>
                 {state?.errors?.email && (
-                    <p className="text-red-500 text-sm mt-2">{/*state.errors.email*/}</p>
+                    <p className="text-red-500 text-sm mt-2">{String(state.errors.email)}</p>
                 )}
                 <SubmitButton />
                 <div className="mt-4 text-center text-sm">

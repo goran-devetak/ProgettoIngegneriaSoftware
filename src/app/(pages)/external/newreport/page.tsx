@@ -1,6 +1,6 @@
 "use client"
 
-import { getAllStations } from "@/app/lib/functions/fetching/stationFunctions";
+import { getAllNotEliminatedStations, getAllStations } from "@/app/lib/functions/fetching/stationFunctions";
 import { Station } from "@/app/lib/models/station/Station";
 import { useActionState, useEffect, useState } from "react";
 
@@ -40,8 +40,8 @@ export default function NewReport() {
 
     useEffect(() => {
         async function fetchStations() {
-            const data = await getAllStations();
-            if(data) setStations(data);
+            const data = await getAllNotEliminatedStations();
+            if (data) setStations(data);
         }
         fetchStations();
     }, []);
@@ -74,7 +74,7 @@ export default function NewReport() {
                     >
                         <option value="" disabled>Seleziona un parcheggio...</option>
                         {stations?.map((station, index) => (
-                            !station.isEliminated && station.isActive && (
+                            (
                                 <option key={index} value={String(station._id)}>
                                     {station.name}
                                 </option>

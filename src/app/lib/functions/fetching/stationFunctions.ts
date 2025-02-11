@@ -30,12 +30,30 @@ export async function getAllActiveStations(): Promise<Station[] | undefined> {
             throw new Error("Failed to fetch stations");
         }
         const data = await res.json() as Station[];
-        return data.filter(st => st.isActive)
+        return data.filter(st => st.isActive && !st.isEliminated)
     } catch (error) {
         console.error("Error fetching stations:", error);
         return undefined;
     }
 };
+
+export async function getAllNotEliminatedStations(): Promise<Station[] | undefined> {
+    try {
+        const res = await fetch(URLS.apis + "/stations", {
+            method: "GET",
+            cache: "no-store",
+        });
+
+        if (!res.ok) {
+            throw new Error("Failed to fetch stations");
+        }
+        const data = await res.json() as Station[];
+        return data.filter(st => !st.isEliminated)
+    } catch (error) {
+        console.error("Error fetching stations:", error);
+        return undefined;
+    }
+}
 
 export async function getSlotByID(stationID: string, slotID: string): Promise<Slot | undefined> {
     try {

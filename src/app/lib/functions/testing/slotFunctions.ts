@@ -13,9 +13,7 @@ export async function fetchSlots(
         if (station && station.slotList) {
             try {
                 const slotPromises = station.slotList.map(async (slot, index) => {
-                    const slotTemp = Object.values(slot).map(element => element.toString());
-                    const slotID = slotTemp.slice(0, 24).join('');
-                    const res = await fetch(`/api/stations/${station._id}/${slotID}`);
+                    const res = await fetch(`/api/stations/${station._id}/${slot}`);
                     const data = await res.json();
 
                     if (data.success) {

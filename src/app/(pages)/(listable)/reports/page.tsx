@@ -11,7 +11,7 @@ export default async function ReportDiv() {
   return (
     <ListDiv>
       <div className="my-10">
-        <h1 className="text-6xl text-center text-gray-800 font-bold" >{"SEGNALAZIONI"}</h1>
+        <h1 className="text-6xl text-center font-bold" > {metadata.title?.toString()}</h1>
       </div>
       <ReportList />
     </ListDiv>

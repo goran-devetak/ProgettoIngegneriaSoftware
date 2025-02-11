@@ -20,7 +20,7 @@ export function StationSelector({ stations, selectedStationID, setSelectedStatio
             >
                 <option value="" disabled>Seleziona un parcheggio...</option>
                 {stations.map((station, index) => (
-                    !station.isEliminated && station.isActive && (
+                    (
                         <option key={index} value={String(station._id)}>
                             {station.name}
                         </option>

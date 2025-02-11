@@ -10,13 +10,15 @@ export async function POST(req: Request) {
     const { name, address, numSlots, state, reported } = await req.json();
 
     const newStation = new StationModel({
-      name:name,
-      address:address,
+      name: name,
+      address: address,
       numSlots: numSlots,
-      state:state,
-      reported:reported,
+      reportCount: 0,
+      isActive: state,
+      reported: reported,
+      isEliminated: false,
       slotList: [],
-      reportList: [], 
+      reportList: [],
     });
 
     await newStation.save();
@@ -38,3 +40,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

@@ -1,20 +1,19 @@
 "use client";
 
 
-interface StationActivenessButtonProps {
+interface DeleteButtonProps {
     stationID: string;
-    initialActive: boolean;
-    disabled: boolean
+    disabled: boolean;
 }
 
-const updateStationState = async (state: boolean, stationID: string) => {
+const deleteStation = async (stationID: string) => {
     try {
         const response = await fetch(`/api/stations/${stationID}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ activating: state, type: "updatestate" }),
+            body: JSON.stringify({ type: "delete" }),
         });
 
         const data = await response.json();
@@ -23,16 +22,16 @@ const updateStationState = async (state: boolean, stationID: string) => {
             throw new Error(data.error || "Errore sconosciuto");
         }
 
-        window.location.reload();
+        window.location.href = window.location.pathname.split('/').slice(0, -1).join('/') || '/';
     } catch (error) {
         console.error("Errore nell'aggiornamento della stazione:", error);
     }
 };
 
 
-export default function StationActivenessButton({ stationID, initialActive, disabled }: StationActivenessButtonProps) {
+export default function DeleteButton({ stationID, disabled }: DeleteButtonProps) {
     const handleClick = async () => {
-        await updateStationState(!initialActive, stationID);
+        await deleteStation(stationID);
     };
 
     if (disabled) {
@@ -40,7 +39,7 @@ export default function StationActivenessButton({ stationID, initialActive, disa
             <button
                 className={`font-bold py-2 px-4 rounded bg-gray-400 text-white cursor-not-allowed`}
             >
-                {!initialActive ? "Segna come attiva" : "Segna come inattiva"}
+                Elimina stazione
             </button>
         )
     }
@@ -48,9 +47,9 @@ export default function StationActivenessButton({ stationID, initialActive, disa
     return (
         <button
             onClick={handleClick}
-            className={`font-bold py-2 px-4 rounded ${!initialActive ? "bg-green-500" : "bg-red-500"} text-white`}
+            className={`font-bold py-2 px-4 rounded bg-red-800 text-white`}
         >
-            {!initialActive ? "Segna come attiva" : "Segna come inattiva"}
+            Elimina stazione
         </button>
     );
 }

@@ -1,16 +1,15 @@
 const COLORS = {
-    mycyan: '#225361',
-    mycyansel:"#193e49",
-    orange:'#fba43c',
-    red:'#dc2626',
-    green:'#16a34a',
-  };
+  mycyan: '#225361',
+  mycyansel: "#193e49",
+  orange: '#fba43c',
+  red: '#dc2626',
+  green: '#16a34a',
+};
 
-  const URLS = {
-    homepage: "https://progetto-ingegneria-software.vercel.app/",
-    apis:"https://progetto-ingegneria-software.vercel.app/api",
-  };
+const URLS = {
+  homepage: "https://progetto-ingegneria-software.vercel.app/",
+  apis: "https://progetto-ingegneria-software.vercel.app/api",
+};
 
-  
-  export { COLORS, URLS };
-  
+
+export { COLORS, URLS };
